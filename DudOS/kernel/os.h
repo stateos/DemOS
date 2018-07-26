@@ -74,10 +74,10 @@ void    sys_start( void );           // system function - start the system sched
 typedef struct __tsk { cnt_t start; cnt_t delay; void *state; fun_t *function; struct __tsk *next; } tsk_t;
 
 /* Private ------------------------------------------------------------------ */
-#define TSK_CONCATENATE(LINE, line)     LINE ## line
-#define TSK_LABEL(line)                 TSK_CONCATENATE(LINE, line)
-#define TSK_STATE(line)              && TSK_LABEL(line)
-#define TSK_BEGIN()                     if (Current->state) goto *Current->state
+#define TSK_CONCATENATE(tag)            Line ## tag
+#define TSK_LABEL(tag)                  TSK_CONCATENATE(tag)
+#define TSK_STATE(tag)               && TSK_LABEL(tag)
+#define TSK_BEGIN(tsk)                  if ((tsk)->state) goto *(tsk)->state
 #define TSK_END()
 
 /* Task ( switch / case ) =================================================== */
@@ -87,19 +87,19 @@ typedef struct __tsk { cnt_t start; cnt_t delay; void *state; fun_t *function; s
 typedef struct __tsk { cnt_t start; cnt_t delay; intptr_t state; fun_t *function; struct __tsk *next; } tsk_t;
 
 /* Private ------------------------------------------------------------------ */
-#define TSK_LABEL(line)                 /* falls through */ case line
-#define TSK_STATE(line)                 line
-#define TSK_BEGIN()                     switch (Current->state) { case 0:
-#define TSK_END()                       default: break; }
+#define TSK_LABEL(tag)                  /* falls through */ case tag
+#define TSK_STATE(tag)                  tag
+#define TSK_BEGIN(tsk)                  switch ((tsk)->state) { default:
+#define TSK_END()                       }
 
 #endif//USE_GOTO
 
 /* -------------------------------------------------------------------------- */
-#define TSK_SET()                  do { Current->state = TSK_STATE(__LINE__);         } while(0); TSK_LABEL(__LINE__):
-#define TSK_YIELD()                do { Current->state = TSK_STATE(__LINE__); return; } while(0); TSK_LABEL(__LINE__):
-#define TSK_INIT(tsk)              do { (tsk)->state = 0;                             } while(0)
-#define TSK_FINI(tsk)              do { (tsk)->function = 0;                          } while(0)
-#define TSK_CALL(tsk)              do { if ((tsk)->function) (tsk)->function();       } while(0)
+#define TSK_WHILE(tsk, cnd)             (tsk)->state = TSK_STATE(__LINE__); TSK_LABEL(__LINE__): if (cnd) return; tsk->state = 0
+#define TSK_YIELD(tsk, cnd)             (tsk)->state = TSK_STATE(__LINE__); if (cnd) return; TSK_LABEL(__LINE__): tsk->state = 0
+#define TSK_INIT(tsk)                   (tsk)->state = 0
+#define TSK_FINI(tsk)                   (tsk)->function = 0
+#define TSK_CALL(tsk)                   if ((tsk)->function) (tsk)->function()
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_TSK(tsk, fun)               tsk_t tsk[1] = { { 0, 0, 0, fun, 0 } }
@@ -117,11 +117,11 @@ bool    tsk_start( tsk_t *tsk );     // system function - add task to queue
 tsk_t * tsk_this ( void );           // system function - return current task
 /* -------------------------------------------------------------------------- */
 //      tsk_begin                       necessary task prologue
-#define tsk_begin()                     tsk_t * const Current = tsk_this(); TSK_BEGIN();                 do {} while(0)
+#define tsk_begin()                     tsk_t * const Current = tsk_this(); TSK_BEGIN(Current);          do {} while(0)
 //      tsk_end                         necessary task epilogue
 #define tsk_end()                       TSK_END();                                                       do {} while(0)
 //      tsk_waitWhile                   wait while the condition (cnd) is true
-#define tsk_waitWhile(cnd)         do { TSK_SET(); if (cnd) return; TSK_INIT(Current);                       } while(0)
+#define tsk_waitWhile(cnd)         do { TSK_WHILE(Current, cnd);                                             } while(0)
 //      tsk_waitUntil                   wait while the condition (cnd) is false
 #define tsk_waitUntil(cnd)         do { tsk_waitWhile(!(cnd));                                               } while(0)
 //      tsk_join                        wait while the task (tsk) is working
@@ -135,7 +135,7 @@ tsk_t * tsk_this ( void );           // system function - return current task
 //      tsk_kill                        stop the task (tsk); it will no longer be executed
 #define tsk_kill(tsk)              do { TSK_FINI(tsk); if ((tsk) == Current) return; TSK_INIT(tsk);          } while(0)
 //      tsk_yield                       pass control to the next ready task
-#define tsk_yield()                do { TSK_YIELD(); TSK_INIT(Current);                                      } while(0)
+#define tsk_yield()                do { TSK_YIELD(Current, true);                                            } while(0)
 //      tsk_flip                        restart the current task with function (fun)
 #define tsk_flip(fun)              do { Current->function = (fun); return;                                   } while(0)
 //      tsk_sleepFor                    delay the current task for the duration of (dly)
@@ -156,8 +156,8 @@ tsk_t * tsk_this ( void );           // system function - return current task
 typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 
 /* Private ------------------------------------------------------------------ */
-#define TMR_INIT(tmr, dly)         do { (tmr)->start = sys_time(), (tmr)->delay = (dly); } while(0)
-#define TMR_WAIT(tmr)                 ( sys_time() - (tmr)->start + 1 <= (tmr)->delay )
+#define TMR_INIT(tmr, dly)              (tmr)->start = sys_time(); (tmr)->delay = (dly)
+#define TMR_WAIT(tmr)                   (sys_time() - (tmr)->start + 1 <= (tmr)->delay)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_TMR(tmr)                    tmr_t tmr[1] = { { 0, 0   } }
@@ -179,9 +179,9 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 typedef struct __sem { uint_fast8_t state; } sem_t;
 
 /* Private ------------------------------------------------------------------ */
-#define SEM_CLR(sem)               do { (sem)->state = 0; } while(0)
-#define SEM_SET(sem)               do { (sem)->state = 1; } while(0)
-#define SEM_GET(sem)                  ( (sem)->state )
+#define SEM_CLR(sem)                    ((sem)->state = 0)
+#define SEM_SET(sem)                    ((sem)->state = 1)
+#define SEM_GET(sem)                    ((sem)->state)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_SEM(sem, ini)               sem_t sem[1] = { { ini } }
@@ -196,9 +196,9 @@ typedef struct __sem { uint_fast8_t state; } sem_t;
 typedef struct __sig { uint_fast8_t signal; } sig_t;
 
 /* Private ------------------------------------------------------------------ */
-#define SIG_CLR(sig)               do { (sig)->signal = 0; } while(0)
-#define SIG_SET(sig)               do { (sig)->signal = 1; } while(0)
-#define SIG_GET(sig)                  ( (sig)->signal )
+#define SIG_CLR(sig)                    ((sig)->signal = 0)
+#define SIG_SET(sig)                    ((sig)->signal = 1)
+#define SIG_GET(sig)                    ((sig)->signal)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_SIG(sig)                    sig_t sig[1] = { { 0 } }
@@ -215,9 +215,9 @@ typedef struct __sig { uint_fast8_t signal; } sig_t;
 typedef struct __evt { uintptr_t event; } evt_t;
 
 /* Private ------------------------------------------------------------------ */
-#define EVT_CLR(evt)               do { (evt)->event = 0;     } while(0)
-#define EVT_PUT(evt, val)          do { (evt)->event = (val); } while(0)
-#define EVT_GET(evt)                  ( (evt)->event )
+#define EVT_CLR(evt)                    ((evt)->event = 0)
+#define EVT_PUT(evt, val)               ((evt)->event = (val))
+#define EVT_GET(evt)                    ((evt)->event)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_EVT(evt)                    evt_t evt[1] = { { 0 } }
@@ -234,9 +234,9 @@ typedef struct __evt { uintptr_t event; } evt_t;
 typedef struct __mtx { tsk_t *owner; } mtx_t;
 
 /* Private ------------------------------------------------------------------ */
-#define MTX_CLR(mtx)               do { (mtx)->owner = 0;       } while(0)
-#define MTX_SET(mtx)               do { (mtx)->owner = Current; } while(0)
-#define MTX_GET(mtx)                  ( (mtx)->owner )
+#define MTX_CLR(mtx)                    ((mtx)->owner = 0)
+#define MTX_SET(mtx)                    ((mtx)->owner = Current)
+#define MTX_GET(mtx)                    ((mtx)->owner)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_MTX(mtx)                    mtx_t mtx[1] = { { 0 } }
