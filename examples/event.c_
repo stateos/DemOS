@@ -1,0 +1,39 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+OS_EVT(evt);
+
+OS_TSK_DEF(sla)
+{
+	unsigned x;
+
+	tsk_begin();
+
+	evt_wait(evt);
+	x = evt_take(evt);
+	LEDs = x;
+
+	tsk_end();
+}
+
+OS_TSK_DEF(mas)
+{
+	static unsigned x = 1;
+
+	tsk_begin();
+
+	tsk_delay(SEC);
+	evt_give(evt, x);
+	x = (x << 1) | (x >> 3);
+
+	tsk_end();
+}
+
+int main()
+{
+	LED_Init();
+
+	tsk_start(sla);
+	tsk_start(mas);
+	sys_start();
+}
