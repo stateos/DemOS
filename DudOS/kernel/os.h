@@ -94,12 +94,16 @@ typedef struct __tsk { cnt_t start; cnt_t delay; intptr_t state; fun_t *function
 
 #endif//USE_GOTO
 
+#define OBJ_CLR(obj)                    *(obj) = 0
+#define OBJ_SET(obj)                    *(obj) = 1
+#define OBJ_PUT(obj, val)               *(obj) = (val)
+#define OBJ_GET(obj)                    *(obj)
 /* -------------------------------------------------------------------------- */
 #define TSK_INIT(tsk)                   ((tsk)->state = 0)
 #define TSK_GOTO(tsk, tag)              ((tsk)->state = (tag))
 #define TSK_STOP(tsk)                   ((tsk)->function = 0)
 #define TSK_START(tsk, fun)             ((tsk)->function = (fun))
-#define TSK_WORK(tsk)                   ((tsk)->function)
+#define TSK_WORK(tsk)                   ((tsk)->function != 0)
 #define TSK_CALL(tsk)                   if (TSK_WORK(tsk)) (tsk)->function()
 #define TSK_WHILE(tsk, cnd)             TSK_GOTO(tsk, TSK_STATE(__LINE__)); TSK_LABEL(__LINE__): if (cnd) return; TSK_INIT(tsk)
 #define TSK_YIELD(tsk, cnd)             TSK_GOTO(tsk, TSK_STATE(__LINE__)); if (cnd) return; TSK_LABEL(__LINE__): TSK_INIT(tsk)
@@ -176,88 +180,68 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 #define tmr_startAgain(tmr)        do { (tmr)->start += (tmr)->delay;            } while(0)
 //      tmr_stop                        stop the timer (tmr)
 #define tmr_stop(tmr)              do { TMR_INIT(tmr, 0);                        } while(0)
+//      tmr_expired                     check if the timer (tmr) finishes countdown
+#define tmr_expired(tmr)              ( !TMR_WORK(tmr) )
 //      tmr_wait                        wait indefinitely until the timer (tmr) finishes countdown
-#define tmr_wait(tmr)              do { tsk_waitWhile(TMR_WORK(tmr));            } while(0)
+#define tmr_wait(tmr)              do { tsk_waitUntil(tmr_expired(tmr));         } while(0)
 //      tmr_waitFor                     wait until the timer (tmr) finishes countdown for given duration of time (dly)
 #define tmr_waitFor(tmr, dly)      do { tmr_startFor(tmr, dly);   tmr_wait(tmr); } while(0)
 //      tmr_waitUntil                   wait until the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_waitUntil(tmr, tim)    do { tmr_startUntil(tmr, tim); tmr_wait(tmr); } while(0)
 //      tmr_waitAgain                   wait again until the timer (tmr) finishes countdown for previously given duration of time
 #define tmr_waitAgain(tmr)         do { tmr_startAgain(tmr);      tmr_wait(tmr); } while(0)
-//      tmr_expired                     check if the timer (tmr) finishes countdown
-#define tmr_expired(tmr)              ( !TMR_WORK(tmr) )
 
 /* Binary semaphore ========================================================= */
 
-typedef struct __sem { uint_fast8_t state; } sem_t;
-
-/* Private ------------------------------------------------------------------ */
-#define SEM_CLR(sem)                    ((sem)->state = 0)
-#define SEM_SET(sem)                    ((sem)->state = 1)
-#define SEM_GET(sem)                    ((sem)->state)
+typedef uint_fast8_t sem_t;
 
 /* Public ------------------------------------------------------------------- */
-#define  OS_SEM(sem, ini)               sem_t sem[1] = { { ini } }
+#define  OS_SEM(sem, ini)               sem_t sem[1] = { ini }
 /* -------------------------------------------------------------------------- */
 //      sem_wait                        wait for the semaphore (sem)
-#define sem_wait(sem)              do { tsk_waitUntil(SEM_GET(sem)); SEM_CLR(sem); } while(0)
+#define sem_wait(sem)              do { tsk_waitUntil(OBJ_GET(sem)); OBJ_CLR(sem); } while(0)
 //      sem_give                        release the semaphore (sem)
-#define sem_give(sem)              do { SEM_SET(sem);                              } while(0)
+#define sem_give(sem)              do { OBJ_SET(sem);                              } while(0)
 
 /* Protected signal ========================================================= */
 
-typedef struct __sig { uint_fast8_t signal; } sig_t;
-
-/* Private ------------------------------------------------------------------ */
-#define SIG_CLR(sig)                    ((sig)->signal = 0)
-#define SIG_SET(sig)                    ((sig)->signal = 1)
-#define SIG_GET(sig)                    ((sig)->signal)
+typedef uint_fast8_t sig_t;
 
 /* Public ------------------------------------------------------------------- */
-#define  OS_SIG(sig)                    sig_t sig[1] = { { 0 } }
+#define  OS_SIG(sig)                    sig_t sig[1] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      sig_wait                        wait for the signal (sig)
-#define sig_wait(sig)              do { tsk_waitUntil(SIG_GET(sig)); } while(0)
+#define sig_wait(sig)              do { tsk_waitUntil(OBJ_GET(sig)); } while(0)
 //      sig_give                        release the signal (sig)
-#define sig_give(sig)              do { SIG_SET(sig);                } while(0)
+#define sig_give(sig)              do { OBJ_SET(sig);                } while(0)
 //      sig_clear                       reset the signal (sig)
-#define sig_clear(sig)             do { SIG_CLR(sig);                } while(0)
+#define sig_clear(sig)             do { OBJ_CLR(sig);                } while(0)
 
 /* Event ==================================================================== */
 
-typedef struct __evt { uintptr_t event; } evt_t;
-
-/* Private ------------------------------------------------------------------ */
-#define EVT_CLR(evt)                    ((evt)->event = 0)
-#define EVT_PUT(evt, val)               ((evt)->event = (val))
-#define EVT_GET(evt)                    ((evt)->event)
+typedef uintptr_t evt_t;
 
 /* Public ------------------------------------------------------------------- */
-#define  OS_EVT(evt)                    evt_t evt[1] = { { 0 } }
+#define  OS_EVT(evt)                    evt_t evt[1] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      evt_wait                        wait for a the new value of the event (evt)
-#define evt_wait(evt)              do { EVT_CLR(evt); tsk_waitUntil(EVT_GET(evt)); } while(0)
+#define evt_wait(evt)              do { OBJ_CLR(evt); tsk_waitUntil(OBJ_GET(evt)); } while(0)
 //      evt_take                        get a value of the event (evt)
-#define evt_take(evt)                 ( EVT_GET(evt) )
+#define evt_take(evt)                 ( OBJ_GET(evt) )
 //      evt_give                        set a new value (val) of the event (evt)
-#define evt_give(evt, val)         do { EVT_PUT(evt, val);                         } while(0)
+#define evt_give(evt, val)         do { OBJ_PUT(evt, val);                         } while(0)
 
 /* Mutex ==================================================================== */
 
-typedef struct __mtx { tsk_t *owner; } mtx_t;
-
-/* Private ------------------------------------------------------------------ */
-#define MTX_CLR(mtx)                    ((mtx)->owner = 0)
-#define MTX_SET(mtx)                    ((mtx)->owner = Current)
-#define MTX_GET(mtx)                    ((mtx)->owner)
+typedef tsk_t *mtx_t;
 
 /* Public ------------------------------------------------------------------- */
-#define  OS_MTX(mtx)                    mtx_t mtx[1] = { { 0 } }
+#define  OS_MTX(mtx)                    mtx_t mtx[1] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      mtx_wait                        wait for the mutex (mtx)
-#define mtx_wait(mtx)              do { tsk_waitWhile(MTX_GET(mtx)); MTX_SET(mtx); } while(0)
-//      mtx_give                        release the owned mutex (mtx)
-#define mtx_give(mtx)              do { if (MTX_GET(mtx) == Current) MTX_CLR(mtx); } while(0)
+#define mtx_wait(mtx)              do { tsk_waitWhile(OBJ_GET(mtx)); OBJ_PUT(mtx, Current); } while(0)
+//      mtx_give                        release previously owned mutex (mtx)
+#define mtx_give(mtx)              do { if (OBJ_GET(mtx) == Current) OBJ_CLR(mtx);          } while(0)
 
 /* -------------------------------------------------------------------------- */
 
