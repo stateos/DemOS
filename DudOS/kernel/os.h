@@ -95,11 +95,14 @@ typedef struct __tsk { cnt_t start; cnt_t delay; intptr_t state; fun_t *function
 #endif//USE_GOTO
 
 /* -------------------------------------------------------------------------- */
-#define TSK_WHILE(tsk, cnd)             (tsk)->state = TSK_STATE(__LINE__); TSK_LABEL(__LINE__): if (cnd) return; tsk->state = 0
-#define TSK_YIELD(tsk, cnd)             (tsk)->state = TSK_STATE(__LINE__); if (cnd) return; TSK_LABEL(__LINE__): tsk->state = 0
-#define TSK_INIT(tsk)                   (tsk)->state = 0
-#define TSK_FINI(tsk)                   (tsk)->function = 0
-#define TSK_CALL(tsk)                   if ((tsk)->function) (tsk)->function()
+#define TSK_INIT(tsk)                   ((tsk)->state = 0)
+#define TSK_GOTO(tsk, tag)              ((tsk)->state = (tag))
+#define TSK_STOP(tsk)                   ((tsk)->function = 0)
+#define TSK_START(tsk, fun)             ((tsk)->function = (fun))
+#define TSK_WORK(tsk)                   ((tsk)->function)
+#define TSK_CALL(tsk)                   if (TSK_WORK(tsk)) (tsk)->function()
+#define TSK_WHILE(tsk, cnd)             TSK_GOTO(tsk, TSK_STATE(__LINE__)); TSK_LABEL(__LINE__): if (cnd) return; TSK_INIT(tsk)
+#define TSK_YIELD(tsk, cnd)             TSK_GOTO(tsk, TSK_STATE(__LINE__)); if (cnd) return; TSK_LABEL(__LINE__): TSK_INIT(tsk)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_TSK(tsk, fun)               tsk_t tsk[1] = { { 0, 0, 0, fun, 0 } }
@@ -117,41 +120,41 @@ bool    tsk_start( tsk_t *tsk );     // system function - add task to queue
 tsk_t * tsk_this ( void );           // system function - return current task
 /* -------------------------------------------------------------------------- */
 //      tsk_begin                       necessary task prologue
-#define tsk_begin()                     tsk_t * const Current = tsk_this(); TSK_BEGIN(Current);          do {} while(0)
+#define tsk_begin()                     tsk_t * const Current = tsk_this(); TSK_BEGIN(Current); do {} while(0)
 //      tsk_end                         necessary task epilogue
-#define tsk_end()                       TSK_END();                                                       do {} while(0)
+#define tsk_end()                       TSK_END();                                              do {} while(0)
 //      tsk_waitWhile                   wait while the condition (cnd) is true
-#define tsk_waitWhile(cnd)         do { TSK_WHILE(Current, cnd);                                             } while(0)
+#define tsk_waitWhile(cnd)         do { TSK_WHILE(Current, cnd);                                    } while(0)
 //      tsk_waitUntil                   wait while the condition (cnd) is false
-#define tsk_waitUntil(cnd)         do { tsk_waitWhile(!(cnd));                                               } while(0)
+#define tsk_waitUntil(cnd)         do { tsk_waitWhile(!(cnd));                                      } while(0)
 //      tsk_join                        wait while the task (tsk) is working
-#define tsk_join(tsk)              do { tsk_waitWhile((tsk)->function);                                      } while(0)
+#define tsk_join(tsk)              do { tsk_waitWhile(TSK_WORK(tsk));                               } while(0)
 //      tsk_startFrom                   start new or restart previously stopped task (tsk) with function (fun)
-#define tsk_startFrom(tsk, fun)    do { if (tsk_start(tsk) || (tsk)->function == 0) (tsk)->function = (fun); } while(0)
+#define tsk_startFrom(tsk, fun)    do { if (tsk_start(tsk) || !TSK_WORK(tsk)) TSK_START(tsk, fun);  } while(0)
 //      tsk_exit                        restart the current task from the initial state
-#define tsk_exit()                 do { return;                                                              } while(0)
+#define tsk_exit()                 do { return;                                                     } while(0)
 //      tsk_stop                        stop the current task; it will no longer be executed
-#define tsk_stop()                 do { TSK_FINI(Current); return;                                           } while(0)
+#define tsk_stop()                 do { TSK_STOP(Current); return;                                  } while(0)
 //      tsk_kill                        stop the task (tsk); it will no longer be executed
-#define tsk_kill(tsk)              do { TSK_FINI(tsk); if ((tsk) == Current) return; TSK_INIT(tsk);          } while(0)
+#define tsk_kill(tsk)              do { TSK_STOP(tsk); if ((tsk) == Current) return; TSK_INIT(tsk); } while(0)
 //      tsk_yield                       pass control to the next ready task
-#define tsk_yield()                do { TSK_YIELD(Current, true);                                            } while(0)
+#define tsk_yield()                do { TSK_YIELD(Current, true);                                   } while(0)
 //      tsk_flip                        restart the current task with function (fun)
-#define tsk_flip(fun)              do { Current->function = (fun); return;                                   } while(0)
+#define tsk_flip(fun)              do { TSK_START(Current, fun); return;                            } while(0)
 //      tsk_sleepFor                    delay execution of current task for given duration of time (dly)
-#define tsk_sleepFor(dly)          do { tmr_waitFor(Current, dly);                                           } while(0)
+#define tsk_sleepFor(dly)          do { tmr_waitFor(Current, dly);                                  } while(0)
 //      tsk_sleepUntil                  delay execution of current task until given timepoint (tim)
-#define tsk_sleepUntil(tim)        do { tmr_waitUntil(Current, tim);                                         } while(0)
+#define tsk_sleepUntil(tim)        do { tmr_waitUntil(Current, tim);                                } while(0)
 //      tsk_sleepAgain                  delay again execution of current task for previously given duration of time
-#define tsk_sleepAgain(tsk)        do { tmr_waitAgain(Current);                                              } while(0)
+#define tsk_sleepAgain(tsk)        do { tmr_waitAgain(Current);                                     } while(0)
 //      tsk_sleep                       delay indefinitely execution of current task
-#define tsk_sleep()                do { tsk_sleepFor(INFINITE);                                              } while(0)
+#define tsk_sleep()                do { tsk_sleepFor(INFINITE);                                     } while(0)
 //      tsk_delay                       delay execution of current task for given duration of time (dly)
-#define tsk_delay(dly)             do { tsk_sleepFor(dly);                                                   } while(0)
+#define tsk_delay(dly)             do { tsk_sleepFor(dly);                                          } while(0)
 //      tsk_suspend                     suspend the current task
-#define tsk_suspend()              do { tsk_sleep();                                                         } while(0)
+#define tsk_suspend()              do { tsk_sleep();                                                } while(0)
 //      tsk_resume                      resume the task (tsk)
-#define tsk_resume(tsk)            do { tmr_stop(tsk);                                                       } while(0)
+#define tsk_resume(tsk)            do { tmr_stop(tsk);                                              } while(0)
 
 /* Timer ==================================================================== */
 
@@ -159,7 +162,7 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 
 /* Private ------------------------------------------------------------------ */
 #define TMR_INIT(tmr, dly)              (tmr)->start = sys_time(); (tmr)->delay = (dly)
-#define TMR_WAIT(tmr)                   (sys_time() - (tmr)->start + 1 <= (tmr)->delay)
+#define TMR_WORK(tmr)                   (sys_time() - (tmr)->start + 1 <= (tmr)->delay)
 
 /* Public ------------------------------------------------------------------- */
 #define  OS_TMR(tmr)                    tmr_t tmr[1] = { { 0, 0   } }
@@ -174,7 +177,7 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 //      tmr_stop                        stop the timer (tmr)
 #define tmr_stop(tmr)              do { TMR_INIT(tmr, 0);                        } while(0)
 //      tmr_wait                        wait indefinitely until the timer (tmr) finishes countdown
-#define tmr_wait(tmr)              do { tsk_waitWhile(TMR_WAIT(tmr));            } while(0)
+#define tmr_wait(tmr)              do { tsk_waitWhile(TMR_WORK(tmr));            } while(0)
 //      tmr_waitFor                     wait until the timer (tmr) finishes countdown for given duration of time (dly)
 #define tmr_waitFor(tmr, dly)      do { tmr_startFor(tmr, dly);   tmr_wait(tmr); } while(0)
 //      tmr_waitUntil                   wait until the timer (tmr) finishes countdown until given timepoint (tim)
@@ -182,7 +185,7 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 //      tmr_waitAgain                   wait again until the timer (tmr) finishes countdown for previously given duration of time
 #define tmr_waitAgain(tmr)         do { tmr_startAgain(tmr);      tmr_wait(tmr); } while(0)
 //      tmr_expired                     check if the timer (tmr) finishes countdown
-#define tmr_expired(tmr)              ( TMR_WAIT(tmr) == false )
+#define tmr_expired(tmr)              ( !TMR_WORK(tmr) )
 
 /* Binary semaphore ========================================================= */
 
