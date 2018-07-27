@@ -57,6 +57,16 @@ extern "C" {
 
 typedef void fun_t( void );
 
+/* Private ------------------------------------------------------------------ */
+#define OBJ_GET(obj)                    (*(obj)         )
+#define OBJ_PUT(obj, val)               (*(obj)  = (val))
+#define OBJ_CLR(obj)                    (*(obj)  = 0    )
+#define OBJ_SET(obj)                    (*(obj)  = 1    )
+#define OBJ_ADD(obj, val)               (*(obj) += (val))
+#define OBJ_SUB(obj, val)               (*(obj) -= (val))
+#define OBJ_INC(obj)                    (*(obj) += 1    )
+#define OBJ_DEC(obj)                    (*(obj) -= 1    )
+
 /* Public ------------------------------------------------------------------- */
 void    sys_init ( void );           // port function - initialize the system timer
 cnt_t   sys_time ( void );           // port function - get current value of the system timer (in milliseconds)
@@ -69,26 +79,24 @@ void    sys_start( void );           // system function - start the system sched
 #define INFINITE           ( ~0UL )  // time value for infinite wait
 #endif
 
-/* Task ( goto / label ) ==================================================== */
-
 #ifdef  USE_GOTO
 
-typedef struct __tsk { cnt_t start; cnt_t delay; void *state; fun_t *function; struct __tsk *next; } tsk_t;
+/* Task ( goto / label ) ==================================================== */
 
-/* Private ------------------------------------------------------------------ */
+typedef void * tag_t;
+
 #define TSK_CONCATENATE(tag)            Line ## tag
 #define TSK_LABEL(tag)                  TSK_CONCATENATE(tag)
 #define TSK_STATE(tag)               && TSK_LABEL(tag)
 #define TSK_BEGIN(tsk)                  if ((tsk)->state) goto *(tsk)->state
 #define TSK_END()
 
-/* Task ( switch / case ) =================================================== */
-
 #else//!USE_GOTO
 
-typedef struct __tsk { cnt_t start; cnt_t delay; intptr_t state; fun_t *function; struct __tsk *next; } tsk_t;
+/* Task ( switch / case ) =================================================== */
 
-/* Private ------------------------------------------------------------------ */
+typedef intptr_t tag_t;
+
 #define TSK_LABEL(tag)                  /* falls through */ case tag
 #define TSK_STATE(tag)                  tag
 #define TSK_BEGIN(tsk)                  switch ((tsk)->state) { default:
@@ -96,15 +104,11 @@ typedef struct __tsk { cnt_t start; cnt_t delay; intptr_t state; fun_t *function
 
 #endif//USE_GOTO
 
-#define OBJ_GET(obj)                    (*(obj)         )
-#define OBJ_PUT(obj, val)               (*(obj)  = (val))
-#define OBJ_CLR(obj)                    (*(obj)  = 0    )
-#define OBJ_SET(obj)                    (*(obj)  = 1    )
-#define OBJ_ADD(obj, val)               (*(obj) += (val))
-#define OBJ_SUB(obj, val)               (*(obj) -= (val))
-#define OBJ_INC(obj)                    (*(obj) += 1    )
-#define OBJ_DEC(obj)                    (*(obj) -= 1    )
-/* -------------------------------------------------------------------------- */
+/* Task ===================================================================== */
+
+typedef struct __tsk { cnt_t start; cnt_t delay; tag_t state; fun_t *function; struct __tsk *next; } tsk_t;
+
+/* Private ------------------------------------------------------------------ */
 #define TSK_INIT(tsk)                   ((tsk)->state = 0)
 #define TSK_GOTO(tsk, tag)              ((tsk)->state = (tag))
 #define TSK_STOP(tsk)                   ((tsk)->function = 0)
@@ -172,6 +176,7 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 
 /* Private ------------------------------------------------------------------ */
 #define TMR_INIT(tmr, dly)              (tmr)->start = sys_time(); (tmr)->delay = (dly)
+#define TMR_STOP(tmr)                   TMR_INIT(tmr, 0)
 #define TMR_WORK(tmr)                   (sys_time() - (tmr)->start + 1 <= (tmr)->delay)
 
 /* Public ------------------------------------------------------------------- */
@@ -185,7 +190,7 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 //      tmr_startAgain                  restart the timer (tmr) for previously given duration of time
 #define tmr_startAgain(tmr)        do { (tmr)->start += (tmr)->delay;            } while(0)
 //      tmr_stop                        stop the timer (tmr)
-#define tmr_stop(tmr)              do { TMR_INIT(tmr, 0);                        } while(0)
+#define tmr_stop(tmr)              do { TMR_STOP(tmr);                           } while(0)
 //      tmr_expired                     check if the timer (tmr) finishes countdown
 #define tmr_expired(tmr)              ( !TMR_WORK(tmr) )
 //      tmr_wait                        wait indefinitely until the timer (tmr) finishes countdown
