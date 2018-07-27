@@ -5,6 +5,7 @@ Free, simple, extremely lightweight, stackless, cooperative, quasi operating sys
 Features:
 - kernel works in cooperative mode only
 - tasks operate on the same stack
+- timers
 - binary semaphores
 - protected signals
 - events
