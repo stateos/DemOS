@@ -1,7 +1,7 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-OS_TMR_START(tmr, SEC);
+OS_TMR(tmr, SEC);
 
 void slave()
 {

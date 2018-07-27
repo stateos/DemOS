@@ -180,8 +180,7 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 #define TMR_WORK(tmr)                   (sys_time() - (tmr)->start + 1 <= (tmr)->delay)
 
 /* Public ------------------------------------------------------------------- */
-#define  OS_TMR(tmr)                    tmr_t tmr[1] = { { 0, 0   } }
-#define  OS_TMR_START(tmr, dly)         tmr_t tmr[1] = { { 0, dly } }
+#define  OS_TMR(tmr, dly)               tmr_t tmr[1] = { { 0, dly } }
 /* -------------------------------------------------------------------------- */
 //      tmr_startFor                    start the timer (tmr) for given duration of time (dly)
 #define tmr_startFor(tmr, dly)     do { TMR_INIT(tmr, dly);                      } while(0)
