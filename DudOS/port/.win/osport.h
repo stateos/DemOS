@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.h
     @author  Rajmund Szymanski
-    @date    26.07.2018
+    @date    27.07.2018
     @brief   DudOS port definitions for Windows.
 
  ******************************************************************************
@@ -33,7 +33,6 @@
 #define __DUDOSPORT_H
 
 #include <windows.h>
-#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
