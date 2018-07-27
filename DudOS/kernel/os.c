@@ -2,7 +2,7 @@
 
     @file    DudOS: os.c
     @author  Rajmund Szymanski
-    @date    26.07.2018
+    @date    27.07.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -33,8 +33,8 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
-static tsk_t  Main[1] = { { .next = Main } };
-static tsk_t *Current = Main;
+static tsk_t  Idle[1] = { { 0, 0, 0, 0, Idle } };
+static tsk_t *Current = Idle;
 
 /* --------------------------------------------------------------------------------------------- */
 
