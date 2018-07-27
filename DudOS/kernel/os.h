@@ -65,7 +65,9 @@ void    sys_start( void );           // system function - start the system sched
 #define MSEC                  1      // time multiplier given in milliseconds
 #define SEC                1000      // time multiplier given in seconds
 #define MIN               60000      // time multiplier given in minutes
+#ifndef INFINITE
 #define INFINITE           ( ~0UL )  // time value for infinite wait
+#endif
 
 /* Task ( goto / label ) ==================================================== */
 
@@ -94,10 +96,14 @@ typedef struct __tsk { cnt_t start; cnt_t delay; intptr_t state; fun_t *function
 
 #endif//USE_GOTO
 
-#define OBJ_CLR(obj)                    *(obj) = 0
-#define OBJ_SET(obj)                    *(obj) = 1
-#define OBJ_PUT(obj, val)               *(obj) = (val)
-#define OBJ_GET(obj)                    *(obj)
+#define OBJ_GET(obj)                    (obj[0]         )
+#define OBJ_PUT(obj, val)               (obj[0]  = (val))
+#define OBJ_CLR(obj)                    (obj[0]  = 0    )
+#define OBJ_SET(obj)                    (obj[0]  = 1    )
+#define OBJ_ADD(obj, val)               (obj[0] += (val))
+#define OBJ_SUB(obj, val)               (obj[0] -= (val))
+#define OBJ_INC(obj)                    (obj[0] += 1    )
+#define OBJ_DEC(obj)                    (obj[0] -= 1    )
 /* -------------------------------------------------------------------------- */
 #define TSK_INIT(tsk)                   ((tsk)->state = 0)
 #define TSK_GOTO(tsk, tag)              ((tsk)->state = (tag))
