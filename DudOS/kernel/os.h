@@ -138,15 +138,15 @@ tsk_t * tsk_this ( void );           // system function - return current task
 #define tsk_yield()                do { TSK_YIELD(Current, true);                                            } while(0)
 //      tsk_flip                        restart the current task with function (fun)
 #define tsk_flip(fun)              do { Current->function = (fun); return;                                   } while(0)
-//      tsk_sleepFor                    delay the current task for the duration of time (dly)
+//      tsk_sleepFor                    delay execution of current task for given duration of time (dly)
 #define tsk_sleepFor(dly)          do { tmr_waitFor(Current, dly);                                           } while(0)
-//      tsk_sleepUntil                  delay the current task until time (tim)
+//      tsk_sleepUntil                  delay execution of current task until given timepoint (tim)
 #define tsk_sleepUntil(tim)        do { tmr_waitUntil(Current, tim);                                         } while(0)
-//      tsk_sleepAgain                  delay again the current task for a pre-set time
+//      tsk_sleepAgain                  delay again execution of current task for previously given duration of time
 #define tsk_sleepAgain(tsk)        do { tmr_waitAgain(Current);                                              } while(0)
-//      tsk_sleep                       delay the current task indefinitely
+//      tsk_sleep                       delay indefinitely execution of current task
 #define tsk_sleep()                do { tsk_sleepFor(INFINITE);                                              } while(0)
-//      tsk_delay                       delay the current task for the duration of time (dly)
+//      tsk_delay                       delay execution of current task for given duration of time (dly)
 #define tsk_delay(dly)             do { tsk_sleepFor(dly);                                                   } while(0)
 //      tsk_suspend                     suspend the current task
 #define tsk_suspend()              do { tsk_sleep();                                                         } while(0)
@@ -165,23 +165,23 @@ typedef struct __tmr { cnt_t start; cnt_t delay; } tmr_t;
 #define  OS_TMR(tmr)                    tmr_t tmr[1] = { { 0, 0   } }
 #define  OS_TMR_START(tmr, dly)         tmr_t tmr[1] = { { 0, dly } }
 /* -------------------------------------------------------------------------- */
-//      tmr_startFor                    start the timer (tmr) for the duration of time (dly)
+//      tmr_startFor                    start the timer (tmr) for given duration of time (dly)
 #define tmr_startFor(tmr, dly)     do { TMR_INIT(tmr, dly);                      } while(0)
-//      tmr_startUntil                  start the timer (tmr) until the time (tim)
+//      tmr_startUntil                  start the timer (tmr) until given timepoint (tim)
 #define tmr_startUntil(tmr, tim)   do { TMR_INIT(tmr, (tim) - (tmr)->start);     } while(0)
-//      tmr_startAgain                  restart the timer (tmr) for a pre-set time
+//      tmr_startAgain                  restart the timer (tmr) for previously given duration of time
 #define tmr_startAgain(tmr)        do { (tmr)->start += (tmr)->delay;            } while(0)
 //      tmr_stop                        stop the timer (tmr)
 #define tmr_stop(tmr)              do { TMR_INIT(tmr, 0);                        } while(0)
-//      tmr_wait                        wait while the timer (tmr) is counting down
+//      tmr_wait                        wait indefinitely until the timer (tmr) finishes countdown
 #define tmr_wait(tmr)              do { tsk_waitWhile(TMR_WAIT(tmr));            } while(0)
-//      tmr_waitFor                     wait while the timer (tmr) is counting down for the duration of time (dly)
+//      tmr_waitFor                     wait until the timer (tmr) finishes countdown for given duration of time (dly)
 #define tmr_waitFor(tmr, dly)      do { tmr_startFor(tmr, dly);   tmr_wait(tmr); } while(0)
-//      tmr_waitUntil                   wait while the timer (tmr) is counting down until time (tim)
+//      tmr_waitUntil                   wait until the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_waitUntil(tmr, tim)    do { tmr_startUntil(tmr, tim); tmr_wait(tmr); } while(0)
-//      tmr_waitAgain                   wait again while the timer (tmr) is counting down for a pre-set time
+//      tmr_waitAgain                   wait again until the timer (tmr) finishes countdown for previously given duration of time
 #define tmr_waitAgain(tmr)         do { tmr_startAgain(tmr);      tmr_wait(tmr); } while(0)
-//      tmr_expired                     check if the timer has finished counting down
+//      tmr_expired                     check if the timer (tmr) finishes countdown
 #define tmr_expired(tmr)              ( TMR_WAIT(tmr) == false )
 
 /* Binary semaphore ========================================================= */
