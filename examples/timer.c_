@@ -1,23 +1,27 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-OS_TMR(tmr, SEC);
+void slave ( void );
+void master( void );
+
+OS_TMR(tmr);
+OS_TSK(mas, 0);
 
 void slave()
 {
 	tsk_begin();
 
 	LED_Tick();
-	tmr_waitAgain(tmr);
+	tsk_flip(master);
 
 	tsk_end();
 }
 
-OS_TSK_DEF(mas)
+void master()
 {
 	tsk_begin();
 
-	tmr_wait(tmr);
+	tmr_waitFor(tmr, SEC);
 	tsk_flip(slave);
 
 	tsk_end();
@@ -27,6 +31,6 @@ int main()
 {
 	LED_Init();
 
-	tsk_start(mas);
+	tsk_startFrom(mas, master);
 	sys_start();
 }
