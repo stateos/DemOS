@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.h
     @author  Rajmund Szymanski
-    @date    26.07.2018
+    @date    28.07.2018
     @brief   DudOS port definitions for ST7 uC.
 
  ******************************************************************************
@@ -37,6 +37,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* --------------------------------------------------------------------------------------------- */
+
+#define disableInterrupts() _asm("sim")
+#define enableInterrupts()  _asm("rim")
 
 /* --------------------------------------------------------------------------------------------- */
 

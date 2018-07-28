@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.c
     @author  Rajmund Szymanski
-    @date    26.07.2018
+    @date    28.07.2018
     @brief   DudOS port file for STM8S uC.
 
  ******************************************************************************
@@ -33,14 +33,15 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
-static volatile cnt_t Counter = 0;
+volatile
+cnt_t sys_counter = 0;
 
 /* --------------------------------------------------------------------------------------------- */
 
 INTERRUPT_HANDLER(TIM4_UPD_OVF_IRQHandler, 23)
 {
 	TIM4->SR1 = (uint8_t) ~TIM4_SR1_UIF; // clear timer's status register
-	Counter++;
+	sys_counter++;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -66,7 +67,7 @@ cnt_t sys_time( void )
 {
 	cnt_t cnt;
 	disableInterrupts();
-	cnt = Counter;
+	cnt = sys_counter;
 	enableInterrupts();
 	return cnt;
 }

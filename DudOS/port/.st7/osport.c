@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.c
     @author  Rajmund Szymanski
-    @date    26.07.2018
+    @date    28.07.2018
     @brief   DudOS port file for ST7 uC.
 
  ******************************************************************************
@@ -33,12 +33,8 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
-#define disableInterrupts() _asm("sim")
-#define enableInterrupts()  _asm("rim")
-
-/* --------------------------------------------------------------------------------------------- */
-
-static volatile cnt_t Counter = 0;
+volatile
+cnt_t sys_counter = 0;
 
 /* --------------------------------------------------------------------------------------------- */
 
@@ -48,7 +44,7 @@ void TIMERA_IRQHandler(void)
 	TASR;     // clear OCF1, step 1
 	TAOC1R;   // clear OCF1, step 2
 	TACR = 0; // reset free running counter
-	Counter++;
+	sys_counter++;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -69,7 +65,7 @@ cnt_t sys_time( void )
 {
 	cnt_t cnt;
 	disableInterrupts();
-	cnt = Counter;
+	cnt = sys_counter;
 	enableInterrupts();
 	return cnt;
 }

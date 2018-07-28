@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.c
     @author  Rajmund Szymanski
-    @date    27.07.2018
+    @date    28.07.2018
     @brief   DudOS port file for ATtiny817 uC.
 
  ******************************************************************************
@@ -34,13 +34,14 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
-static volatile cnt_t Counter = 0;
+volatile
+cnt_t sys_counter = 0;
 
 /* --------------------------------------------------------------------------------------------- */
 
 ISR( TIMER1_OVF_vect )
 {
-	Counter++;
+	sys_counter++;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -63,7 +64,7 @@ cnt_t sys_time( void )
 {
 	cnt_t cnt;
 	cli();
-	cnt = Counter;
+	cnt = sys_counter;
 	sei();
 	return cnt;
 }

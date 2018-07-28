@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.c
     @author  Rajmund Szymanski
-    @date    26.07.2018
+    @date    28.07.2018
     @brief   DudOS port file for STM32F3 uC.
 
  ******************************************************************************
@@ -33,14 +33,15 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
-static volatile cnt_t Counter = 0;
+volatile
+cnt_t sys_counter = 0;
 
 /* --------------------------------------------------------------------------------------------- */
 
 void SysTick_Handler( void )
 {
 	SysTick->CTRL;
-	Counter++;
+	sys_counter++;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -55,7 +56,7 @@ void sys_init( void )
 cnt_t sys_time( void )
 {
 	cnt_t cnt;
-	cnt = Counter;
+	cnt = sys_counter;
 	return cnt;
 }
 
