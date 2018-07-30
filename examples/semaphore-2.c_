@@ -1,0 +1,43 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+OS_SEM(sem, 0);
+
+OS_TSK_DEF(dly)
+{
+	tsk_begin();
+
+	sem_wait(sem);
+	tsk_stop();
+
+	tsk_end();
+}
+
+OS_TSK_DEF(sla)
+{
+	tsk_begin();
+
+	tsk_call(dly);
+	LED_Tick();
+
+	tsk_end();
+}
+
+OS_TSK_DEF(mas)
+{
+	tsk_begin();
+
+	tsk_delay(SEC);
+	sem_give(sem);
+
+	tsk_end();
+}
+
+int main()
+{
+	LED_Init();
+
+	tsk_start(sla);
+	tsk_start(mas);
+	sys_start();
+}
