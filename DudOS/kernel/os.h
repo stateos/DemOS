@@ -154,14 +154,14 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 //      tsk_sleepUntil                  delay execution of current task until given timepoint (tim)
 #define tsk_sleepUntil(tim)        do { tmr_waitUntil(&tsk_this->tmr, tim);                                     } while(0)
 //      tsk_sleepNext                   delay again execution of current task for given duration of time (dly)
-#define tsk_sleepNext(dly)         do { tmr_waitNext(&tsk_this->tmr);                                           } while(0)
+#define tsk_sleepNext(dly)         do { tmr_waitNext(&tsk_this->tmr, dly);                                      } while(0)
 //      tsk_sleep                       delay indefinitely execution of current task
 #define tsk_sleep()                do { tsk_sleepFor(INFINITE);                                                 } while(0)
 //      tsk_delay                       delay execution of current task for given duration of time (dly)
 #define tsk_delay(dly)             do { tsk_sleepFor(dly);                                                      } while(0)
-//      tsk_suspend                     suspend the current task
+//      tsk_suspend                     suspend execution of the ready task (tsk)
 #define tsk_suspend(tsk)           do { if ((tsk)->id == ID_RDY) (tsk)->id = ID_DLY; if (tsk_self(tsk)) return; } while(0)
-//      tsk_resume                      resume the task (tsk)
+//      tsk_resume                      resume execution of the suspended task (tsk)
 #define tsk_resume(tsk)            do { if ((tsk)->id == ID_DLY) (tsk)->id = ID_RDY;                            } while(0)
 
 /* Timer ==================================================================== */
