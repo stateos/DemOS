@@ -15,3 +15,12 @@ Target: ARM Cortex-M, STM8, ST7, AVR8 families, Windows.
 - events
 - mutexes
 - all documentation is contained within the source files
+- examples and templates are in separate repositories on [GitHub](https://github.com/stateos)
+
+### Targets
+
+CM0(+), CM3, CM4(F), CM7, STM8, ST7, AVR8, Win32/64
+
+### License
+
+This project is licensed under the terms of [MIT License (MIT)](https://opensource.org/licenses/MIT).

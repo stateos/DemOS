@@ -10,6 +10,7 @@ Features:
 - protected signals
 - events
 - mutexes
+- examples and templates are in separate repositories (https://github.com/stateos)
 ---------
 0.1
 - initial release
