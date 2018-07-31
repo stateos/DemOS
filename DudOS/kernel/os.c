@@ -34,8 +34,8 @@
 /* --------------------------------------------------------------------------------------------- */
 
 static
-tsk_t  Idle[1]  = { { 0, ID_RIP, 0, 0, Idle } };
-tsk_t *tsk_this = Idle;
+tsk_t  MAIN     = { 0, ID_RIP, 0, 0, &MAIN };
+tsk_t *tsk_this = &MAIN;
 
 /* --------------------------------------------------------------------------------------------- */
 
@@ -47,8 +47,8 @@ void tsk_start( tsk_t *tsk )
 	{
 		if (tsk->next == 0)
 		{
-			tsk->next = prv = tsk_this;
-			while (prv->next != tsk_this) prv = prv->next;
+			tsk->next = prv = &MAIN;
+			while (prv->next != &MAIN) prv = prv->next;
 			prv->next = tsk;
 		}
 		tsk->id = ID_RDY;
