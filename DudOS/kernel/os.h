@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    30.07.2018
+    @date    31.07.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -151,10 +151,10 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 #define tsk_flip(fun)              do { tsk_this->function = (fun); return;                                     } while(0)
 //      tsk_sleepFor                    delay execution of current task for given duration of time (dly)
 #define tsk_sleepFor(dly)          do { tmr_waitFor(&tsk_this->tmr, dly);                                       } while(0)
+//      tsk_sleepNext                   delay execution of current task for given duration of time (dly) from the end of the previous countdown
+#define tsk_sleepNext(dly)         do { tmr_waitNext(&tsk_this->tmr, dly);                                      } while(0)
 //      tsk_sleepUntil                  delay execution of current task until given timepoint (tim)
 #define tsk_sleepUntil(tim)        do { tmr_waitUntil(&tsk_this->tmr, tim);                                     } while(0)
-//      tsk_sleepNext                   delay again execution of current task for given duration of time (dly)
-#define tsk_sleepNext(dly)         do { tmr_waitNext(&tsk_this->tmr, dly);                                      } while(0)
 //      tsk_sleep                       delay indefinitely execution of current task
 #define tsk_sleep()                do { tsk_sleepFor(INFINITE);                                                 } while(0)
 //      tsk_delay                       delay execution of current task for given duration of time (dly)
@@ -179,10 +179,10 @@ typedef cnt_t tmr_t;
 #define tmr_expiredUntil(tmr, tim)    ( tmr_expiredFor(tmr, (tim) - *(tmr)) )
 //      tmr_waitFor                     wait until the timer (tmr) finishes countdown for given duration of time (dly)
 #define tmr_waitFor(tmr, dly)      do { tmr_start(tmr); tsk_waitUntil(tmr_expiredFor(tmr, dly));  *(tmr) += (dly); } while(0)
+//      tmr_waitNext                    wait until the timer (tmr) finishes countdown for given duration of time (dly) from the end of the previous countdown
+#define tmr_waitNext(tmr, dly)     do {                 tsk_waitUntil(tmr_expiredFor(tmr, dly));  *(tmr) += (dly); } while(0)
 //      tmr_waitUntil                   wait until the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_waitUntil(tmr, tim)    do { tmr_start(tmr); tsk_waitUntil(tmr_expiredUntil(tmr, tim)); *(tmr) = (tim); } while(0)
-//      tmr_waitAgain                   wait again until the timer (tmr) finishes countdown for given duration of time (dly)
-#define tmr_waitNext(tmr, dly)     do {                 tsk_waitUntil(tmr_expiredFor(tmr, dly));  *(tmr) += (dly); } while(0)
 
 /* Binary semaphore ========================================================= */
 
