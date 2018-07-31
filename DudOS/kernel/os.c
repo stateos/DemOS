@@ -52,6 +52,7 @@ void tsk_start( tsk_t *tsk )
 			prv->next = tsk;
 		}
 		tsk->id = ID_RDY;
+		tsk->state = 0;
 	}
 }
 
