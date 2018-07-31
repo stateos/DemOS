@@ -2,7 +2,7 @@
 
     @file    DudOS: os.c
     @author  Rajmund Szymanski
-    @date    28.07.2018
+    @date    31.07.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -47,7 +47,7 @@ void tsk_start( tsk_t *tsk )
 	{
 		if (tsk->next == 0)
 		{
-			tsk->next = prv = &MAIN;
+			prv = tsk->next = &MAIN;
 			while (prv->next != &MAIN) prv = prv->next;
 			prv->next = tsk;
 		}
