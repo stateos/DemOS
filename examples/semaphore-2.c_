@@ -1,13 +1,13 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-OS_SEM(sem, 0);
+sem_t sem = 0;
 
 OS_TSK_DEF(dly)
 {
 	tsk_begin();
 
-	sem_wait(sem);
+	sem_wait(&sem);
 	tsk_stop();
 
 	tsk_end();
@@ -28,7 +28,7 @@ OS_TSK_DEF(mas)
 	tsk_begin();
 
 	tsk_delay(SEC);
-	sem_give(sem);
+	sem_give(&sem);
 
 	tsk_end();
 }

@@ -1,7 +1,14 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-OS_TSK_DEF(sla)
+void slave ( void );
+void master( void );
+
+tsk_t sla = TSK_INIT(slave);
+tsk_t mas = TSK_INIT(master);
+tmr_t tmr = 0;
+
+void slave( void )
 {
 	tsk_begin();
 
@@ -11,21 +18,21 @@ OS_TSK_DEF(sla)
 	tsk_end();
 }
 
-OS_TSK_DEF(mas)
+void master( void )
 {
 	tsk_begin();
 
-	tsk_delay(SEC);
-	tsk_resume(sla);
+	tmr_waitFor(&tmr, SEC);
+	tsk_resume(&sla);
 
 	tsk_end();
 }
 
-int main()
+int main( void )
 {
 	LED_Init();
 
-	tsk_start(sla);
-	tsk_start(mas);
+	tsk_start(&sla);
+	tsk_start(&mas);
 	sys_start();
 }
