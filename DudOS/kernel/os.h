@@ -107,7 +107,9 @@ tsk_t * tsk_this;                    // system variable - current task
 void    tsk_start( tsk_t *tsk );     // system function - make task ready to execute
 
 /* -------------------------------------------------------------------------- */
-#define OS_TSK(tsk, fun)                tsk_t tsk[1] = { { 0, ID_RIP, 0, fun, 0 } }
+#define TSK_INIT(fun)                   { 0, ID_RIP, 0, fun, 0 }
+
+#define OS_TSK(tsk, fun)                tsk_t tsk[] = { TSK_INIT(fun) }
 
 #define OS_TSK_DEF(tsk)                 void tsk ## __fun( void ); \
                                         OS_TSK(tsk, tsk ## __fun); \
@@ -169,7 +171,7 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 typedef cnt_t tmr_t;
 
 /* -------------------------------------------------------------------------- */
-#define OS_TMR(tmr)                     tmr_t tmr[1] = { 0 }
+#define OS_TMR(tmr)                     tmr_t tmr[] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      tmr_start                       start the timer (tmr)
 #define tmr_start(tmr)             do { *(tmr) = sys_time();                                                       } while(0)
@@ -189,7 +191,7 @@ typedef cnt_t tmr_t;
 typedef uint_fast8_t sem_t;
 
 /* -------------------------------------------------------------------------- */
-#define OS_SEM(sem, ini)                sem_t sem[1] = { ini }
+#define OS_SEM(sem, ini)                sem_t sem[] = { ini }
 /* -------------------------------------------------------------------------- */
 //      sem_wait                        wait for the semaphore (sem)
 #define sem_wait(sem)              do { tsk_waitUntil(*(sem)); *(sem) = 0; } while(0)
@@ -201,7 +203,7 @@ typedef uint_fast8_t sem_t;
 typedef uint_fast8_t sig_t;
 
 /* -------------------------------------------------------------------------- */
-#define OS_SIG(sig)                     sig_t sig[1] = { 0 }
+#define OS_SIG(sig)                     sig_t sig[] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      sig_wait                        wait for the signal (sig)
 #define sig_wait(sig)              do { tsk_waitUntil(*(sig)); } while(0)
@@ -215,7 +217,7 @@ typedef uint_fast8_t sig_t;
 typedef uintptr_t evt_t;
 
 /* -------------------------------------------------------------------------- */
-#define OS_EVT(evt)                     evt_t evt[1] = { 0 }
+#define OS_EVT(evt)                     evt_t evt[] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      evt_wait                        wait for a the new value of the event (evt)
 #define evt_wait(evt)              do { *(evt) = 0; tsk_waitUntil(*(evt)); } while(0)
@@ -229,7 +231,7 @@ typedef uintptr_t evt_t;
 typedef tsk_t *mtx_t;
 
 /* -------------------------------------------------------------------------- */
-#define OS_MTX(mtx)                     mtx_t mtx[1] = { 0 }
+#define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
 /* -------------------------------------------------------------------------- */
 //      mtx_wait                        wait for the mutex (mtx)
 #define mtx_wait(mtx)              do { tsk_waitWhile(*(mtx)); *(mtx) = tsk_this; } while(0)
