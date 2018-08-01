@@ -1,5 +1,6 @@
 # DudOS
   [![Build Status](https://travis-ci.org/stateos/DudOS.svg)](https://travis-ci.org/stateos/DudOS)
+  [![Github Release](https://img.shields.io/github/release/stateos/DudOS.svg)](https://github.com/stateos/DudOS/releases)
   [![Software License](https://img.shields.io/github/license/stateos/DudOS.svg)](https://opensource.org/licenses/MIT)
 
 Free, simple, extremely lightweight, stackless, cooperative, quasi operating system (OS) designed for deeply embedded applications.
