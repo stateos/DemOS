@@ -17,6 +17,7 @@ Target: ARM Cortex-M, STM8, ST7, AVR8 families, Windows.
 - mutexes
 - all documentation is contained within the source files
 - examples and templates are in separate repositories on [GitHub](https://github.com/stateos)
+- archival releases on [sourceforge](https://sourceforge.net/projects/dudos.stateos.p)
 
 ### Targets
 
