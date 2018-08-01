@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    01.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -128,7 +128,9 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 //      tsk_begin                       necessary prologue of the task
 #define tsk_begin()                     TSK_BEGIN(); do {                                                          } while(0)
 //      tsk_end                         necessary epilogue of the task
-#define tsk_end()                       TSK_END();   do { tsk_exit();                                              } while(0)
+#define tsk_end()                       TSK_END();   do { tsk_again();                                             } while(0)
+//      tsk_self                        check whether the task (tsk) is the current task
+#define tsk_self(tsk)                 ( (tsk) == tsk_this )
 //      tsk_waitWhile                   wait while the condition (cnd) is true
 #define tsk_waitWhile(cnd)         do { TSK_WHILE(cnd);                                                            } while(0)
 //      tsk_waitUntil                   wait while the condition (cnd) is false
@@ -139,10 +141,8 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 #define tsk_join(tsk)              do { tsk_waitUntil((tsk)->id == ID_RIP);                                        } while(0)
 //      tsk_call                        start task (tsk) and wait for the end of execution of (tsk)
 #define tsk_call(tsk)              do { tsk_start(tsk); tsk_join(tsk);                                             } while(0)
-//      tsk_self                        check whether the task (tsk) is the current task
-#define tsk_self(tsk)                 ( (tsk) == tsk_this )
-//      tsk_exit                        restart the current task from the initial state
-#define tsk_exit()                 do { tsk_this->state = 0; return;                                               } while(0)
+//      tsk_again                       restart the current task from the initial state
+#define tsk_again()                do { tsk_this->state = 0; return;                                               } while(0)
 //      tsk_stop                        stop the current task; it will no longer be executed
 #define tsk_stop()                 do { tsk_this->id = ID_RIP; return;                                             } while(0)
 //      tsk_kill                        stop the task (tsk); it will no longer be executed
@@ -150,7 +150,7 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 //      tsk_yield                       pass control to the next ready task
 #define tsk_yield()                do { TSK_YIELD(true);                                                           } while(0)
 //      tsk_flip                        restart the current task with function (fun)
-#define tsk_flip(fun)              do { tsk_this->function = (fun); tsk_exit();                                    } while(0)
+#define tsk_flip(fun)              do { tsk_this->function = (fun); tsk_again();                                   } while(0)
 //      tsk_sleepFor                    delay execution of current task for given duration of time (dly)
 #define tsk_sleepFor(dly)          do { tmr_waitFor(&tsk_this->tmr, dly);                                          } while(0)
 //      tsk_sleepNext                   delay execution of current task for given duration of time (dly) from the end of the previous countdown
