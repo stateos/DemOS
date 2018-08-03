@@ -141,6 +141,8 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 #define tsk_join(tsk)              do { tsk_waitUntil((tsk)->id == ID_RIP);                                        } while(0)
 //      tsk_call                        start task (tsk) and wait for the end of execution of (tsk)
 #define tsk_call(tsk)              do { tsk_start(tsk); tsk_join(tsk);                                             } while(0)
+//      tsk_callFrom                    start new or restart previously stopped task (tsk) with function (fun) and wait for the end of execution of (tsk)
+#define tsk_callFrom(tsk, fun)     do { tsk_startFrom(tsk, fun); tsk_join(tsk);                                    } while(0)
 //      tsk_again                       restart the current task from the initial state
 #define tsk_again()                do { tsk_this->state = 0; return;                                               } while(0)
 //      tsk_stop                        stop the current task; it will no longer be executed
