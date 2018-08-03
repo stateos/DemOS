@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.c
     @author  Rajmund Szymanski
-    @date    28.07.2018
+    @date    03.08.2018
     @brief   DudOS port file for ST7 uC.
 
  ******************************************************************************
@@ -51,8 +51,8 @@ void TIMERA_IRQHandler(void)
 
 void sys_init( void )
 {
-	TAOC1R = 2000; // 8.000.000 / 4 / 2.000 = 1.000
-	TAOC2R =   -6; // zamro¿enie kana³u 2 timera A
+	TAOC1R = 2000; // 8000000 / 4 / 2000 = 1000 Hz
+	TAOC2R =   -6; // freeze channel 2 of timer A
 	TACR2  =    0; // fCPU / 4
 	TACR1 |= TACR1_OCIE_OR;
 
