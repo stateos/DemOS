@@ -12,7 +12,7 @@ void slave( void )
 {
 	tsk_begin();
 
-	tsk_suspend(sys_task);
+	tsk_suspend(tsk_this());
 	LED_Tick();
 
 	tsk_end();
