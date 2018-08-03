@@ -32,7 +32,7 @@
 #ifndef __DUDOS
 
 #define __DUDOS_MAJOR        0
-#define __DUDOS_MINOR        1
+#define __DUDOS_MINOR        2
 #define __DUDOS_BUILD        0
 
 #define __DUDOS        ((((__DUDOS_MAJOR)&0xFFUL)<<24)|(((__DUDOS_MINOR)&0xFFUL)<<16)|((__DUDOS_BUILD)&0xFFFFUL))
