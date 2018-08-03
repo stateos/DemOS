@@ -76,7 +76,7 @@ typedef void * tag_t;
 #define TSK_CONCATENATE(tag)            Line ## tag
 #define TSK_LABEL(tag)                  TSK_CONCATENATE(tag)
 #define TSK_STATE(tag)               && TSK_LABEL(tag)
-#define TSK_BEGIN()                     if (sys_task->state) goto *sys_task->state
+#define TSK_BEGIN()                     if (sys_current->state) goto *sys_current->state
 #define TSK_END()
 
 #else//!USE_GOTO
@@ -87,7 +87,7 @@ typedef intptr_t tag_t;
 
 #define TSK_LABEL(tag)                  /* falls through */ case tag
 #define TSK_STATE(tag)                  tag
-#define TSK_BEGIN()                     switch (sys_task->state) { case 0:
+#define TSK_BEGIN()                     switch (sys_current->state) { case 0:
 #define TSK_END()                       }
 
 #endif//USE_GOTO
@@ -101,16 +101,16 @@ typedef enum   __tid { ID_RIP = 0, ID_RDY, ID_DLY } tid_t;
 typedef struct __tsk { cnt_t tmr; tid_t id; tag_t state; fun_t *function; struct __tsk *next; } tsk_t;
 
 extern
-tsk_t * sys_task;                    // system variable - current task
+tsk_t * sys_current;                 // system variable - current task
 void    tsk_start( tsk_t *tsk );     // system function - make task ready to execute
 
 /* -------------------------------------------------------------------------- */
 // for internal use; start the system scheduler
-#define SYS_START()                 do { if ((sys_task = sys_task->next)->id == ID_RDY) sys_task->function(); } while(1)
+#define SYS_START()                 do { if ((sys_current = sys_current->next)->id == ID_RDY) sys_current->function(); } while(1)
 
 /* -------------------------------------------------------------------------- */
 // initialize the system timer and start the system scheduler
-#define sys_start()                 do { sys_init(); SYS_START();                                             } while(0)
+#define sys_start()                 do { sys_init(); SYS_START(); } while(0)
 
 /* -------------------------------------------------------------------------- */
 // initialize a task structure with function (fun)
@@ -128,12 +128,14 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
                                         void tsk ## __fun( void )
 /* -------------------------------------------------------------------------- */
 // for internal use; wait while the condition (cnd) is true
-#define TSK_WHILE(cnd)                  sys_task->state = TSK_STATE(__LINE__); TSK_LABEL(__LINE__): if (cnd) return; (void)0
+#define TSK_WHILE(cnd)                  sys_current->state = TSK_STATE(__LINE__); TSK_LABEL(__LINE__): if (cnd) return; (void)0
 // for internal use; pass control to the next ready task if the condition (cnd) is true
-#define TSK_YIELD(cnd)                  sys_task->state = TSK_STATE(__LINE__); if (cnd) return; TSK_LABEL(__LINE__): (void)0
+#define TSK_YIELD(cnd)                  sys_current->state = TSK_STATE(__LINE__); if (cnd) return; TSK_LABEL(__LINE__): (void)0
 /* -------------------------------------------------------------------------- */
+// return the current task
+#define tsk_this()                    ( sys_current )
 // check whether the task (tsk) is the current task
-#define tsk_self(tsk)                 ( (tsk) == sys_task )
+#define tsk_self(tsk)                 ( sys_current == (tsk) )
 // necessary prologue of the task
 #define tsk_begin()                     TSK_BEGIN(); do {                                                          } while(0)
 // necessary epilogue of the task
@@ -151,21 +153,21 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 // start new or restart previously stopped task (tsk) with function (fun) and wait for the end of execution of (tsk)
 #define tsk_callFrom(tsk, fun)     do { tsk_startFrom(tsk, fun); tsk_join(tsk);                                    } while(0)
 // restart the current task from the initial state
-#define tsk_again()                do { sys_task->state = 0; return;                                               } while(0)
+#define tsk_again()                do { sys_current->state = 0; return;                                            } while(0)
 // stop the current task; it will no longer be executed
-#define tsk_stop()                 do { sys_task->id = ID_RIP; return;                                             } while(0)
+#define tsk_stop()                 do { sys_current->id = ID_RIP; return;                                          } while(0)
 // stop the task (tsk); it will no longer be executed
 #define tsk_kill(tsk)              do { (tsk)->id = ID_RIP; if (tsk_self(tsk)) return;                             } while(0)
 // pass control to the next ready task
 #define tsk_yield()                do { TSK_YIELD(true);                                                           } while(0)
 // restart the current task with function (fun)
-#define tsk_flip(fun)              do { sys_task->function = (fun); tsk_again();                                   } while(0)
+#define tsk_flip(fun)              do { sys_current->function = (fun); tsk_again();                                } while(0)
 // delay execution of current task for given duration of time (dly)
-#define tsk_sleepFor(dly)          do { tmr_waitFor(&sys_task->tmr, dly);                                          } while(0)
+#define tsk_sleepFor(dly)          do { tmr_waitFor(&sys_current->tmr, dly);                                       } while(0)
 // delay execution of current task for given duration of time (dly) from the end of the previous countdown
-#define tsk_sleepNext(dly)         do { tmr_waitNext(&sys_task->tmr, dly);                                         } while(0)
+#define tsk_sleepNext(dly)         do { tmr_waitNext(&sys_current->tmr, dly);                                      } while(0)
 // delay execution of current task until given timepoint (tim)
-#define tsk_sleepUntil(tim)        do { tmr_waitUntil(&sys_task->tmr, tim);                                        } while(0)
+#define tsk_sleepUntil(tim)        do { tmr_waitUntil(&sys_current->tmr, tim);                                     } while(0)
 // delay indefinitely execution of current task
 #define tsk_sleep()                do { tsk_sleepFor(INFINITE);                                                    } while(0)
 // delay execution of current task for given duration of time (dly)
@@ -248,9 +250,9 @@ typedef tsk_t *mtx_t;
 #define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
 /* -------------------------------------------------------------------------- */
 // wait for the mutex (mtx)
-#define mtx_wait(mtx)              do { tsk_waitWhile(*(mtx)); *(mtx) = sys_task; } while(0)
+#define mtx_wait(mtx)              do { tsk_waitWhile(*(mtx)); *(mtx) = sys_current; } while(0)
 // release previously owned mutex (mtx)
-#define mtx_give(mtx)              do { if (*(mtx) == sys_task) *(mtx) = 0;       } while(0)
+#define mtx_give(mtx)              do { if (tsk_self(*(mtx)))  *(mtx) = 0;           } while(0)
 
 /* -------------------------------------------------------------------------- */
 
