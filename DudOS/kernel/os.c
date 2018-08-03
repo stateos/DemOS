@@ -2,7 +2,7 @@
 
     @file    DudOS: os.c
     @author  Rajmund Szymanski
-    @date    31.07.2018
+    @date    03.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -35,38 +35,26 @@
 
 static
 tsk_t  MAIN     = { 0, ID_RIP, 0, 0, &MAIN };
-tsk_t *tsk_this = &MAIN;
+tsk_t *sys_task = &MAIN;
 
 /* --------------------------------------------------------------------------------------------- */
 
 void tsk_start( tsk_t *tsk )
 {
-	tsk_t *prv;
+	static
+	tsk_t *prv = &MAIN;
 
 	if (tsk->id == ID_RIP)
 	{
+		tsk->state = 0;
+		tsk->id = ID_RDY;
+
 		if (tsk->next == 0)
 		{
-			prv = tsk->next = &MAIN;
-			while (prv->next != &MAIN) prv = prv->next;
+			tsk->next = &MAIN;
 			prv->next = tsk;
+			prv = tsk;
 		}
-		tsk->id = ID_RDY;
-		tsk->state = 0;
-	}
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-void sys_start( void )
-{
-	sys_init();
-
-	for (;;)
-	{
-		tsk_this = tsk_this->next;
-		if (tsk_this->id == ID_RDY)
-			tsk_this->function();
 	}
 }
 
