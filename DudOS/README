@@ -20,3 +20,4 @@ Features:
 - updated descriptions
 - updated kernel
 - added tsk_this definition
+- added tsk_restart and tsk_restartFrom definitions
