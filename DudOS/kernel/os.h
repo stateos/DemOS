@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    04.08.2018
+    @date    05.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -193,13 +193,13 @@ typedef cnt_t tmr_t;
 #define tmr_expiredFor(tmr, dly)      ( sys_time() - *(tmr) + 1 > (dly) )
 // check if the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_expiredUntil(tmr, tim)    ( tmr_expiredFor(tmr, (tim) - *(tmr)) )
-// start the timer (tmr)
+// start/restart the timer (tmr)
 #define tmr_start(tmr)             do { *(tmr) = sys_time();                                                       } while(0)
-// wait until the timer (tmr) finishes countdown for given duration of time (dly)
-#define tmr_waitFor(tmr, dly)      do { tmr_start(tmr); tsk_waitUntil(tmr_expiredFor(tmr, dly));  *(tmr) += (dly); } while(0)
+// start/restart the timer (tmr) and wait until the timer (tmr) finishes countdown for given duration of time (dly)
+#define tmr_waitFor(tmr, dly)      do { tmr_start(tmr); tsk_waitUntil(tmr_expiredFor(tmr, dly)); *(tmr) += (dly);  } while(0)
 // wait until the timer (tmr) finishes countdown for given duration of time (dly) from the end of the previous countdown
-#define tmr_waitNext(tmr, dly)     do {                 tsk_waitUntil(tmr_expiredFor(tmr, dly));  *(tmr) += (dly); } while(0)
-// wait until the timer (tmr) finishes countdown until given timepoint (tim)
+#define tmr_waitNext(tmr, dly)     do { tsk_waitUntil(tmr_expiredFor(tmr, dly)); *(tmr) += (dly);                  } while(0)
+// start/restart the timer (tmr) and wait until the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_waitUntil(tmr, tim)    do { tmr_start(tmr); tsk_waitUntil(tmr_expiredUntil(tmr, tim)); *(tmr) = (tim); } while(0)
 
 /* Binary semaphore ========================================================= */
@@ -256,7 +256,7 @@ typedef tsk_t *mtx_t;
 // wait for the mutex (mtx)
 #define mtx_wait(mtx)              do { tsk_waitWhile(*(mtx)); *(mtx) = sys_current; } while(0)
 // release previously owned mutex (mtx)
-#define mtx_give(mtx)              do { if (tsk_self(*(mtx)))  *(mtx) = 0;           } while(0)
+#define mtx_give(mtx)              do { if (tsk_self(*(mtx))) *(mtx) = 0;            } while(0)
 
 /* -------------------------------------------------------------------------- */
 
