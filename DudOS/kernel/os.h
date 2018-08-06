@@ -202,6 +202,21 @@ typedef cnt_t tmr_t;
 // start/restart the timer (tmr) and wait until the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_waitUntil(tmr, tim)    do { tmr_start(tmr); tsk_waitUntil(tmr_expiredUntil(tmr, tim)); *(tmr) = (tim); } while(0)
 
+/* Mutex ==================================================================== */
+// definition of mutex
+typedef tsk_t *mtx_t;
+
+/* -------------------------------------------------------------------------- */
+// define and initialize the mutex (mtx)
+#define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
+/* -------------------------------------------------------------------------- */
+// try to lock the mutex (mtx); return true if the mutex was successfully locked
+#define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true))
+// wait for the mutex (mtx)
+#define mtx_wait(mtx)              do { tsk_waitUntil(mtx_take(mtx)); } while(0)
+// release previously owned mutex (mtx); return true if the mutex was successfully unlocked
+#define mtx_give(mtx)                 ( tsk_self(*(mtx)) ? ((*(mtx) = 0), true) : false )
+
 /* Binary semaphore ========================================================= */
 // definition of binary semaphore
 typedef uint_fast8_t sem_t;
@@ -210,7 +225,7 @@ typedef uint_fast8_t sem_t;
 // define and initialize the binary semaphore (sem) with initial value (ini)
 #define OS_SEM(sem, ini)                sem_t sem[] = { ini }
 /* -------------------------------------------------------------------------- */
-// try to lock the semaphore (sem); return true if the semaphore was locked, otherwise return false
+// try to lock the semaphore (sem); return true if the semaphore was successfully locked
 #define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
 // wait for the semaphore (sem)
 #define sem_wait(sem)              do { tsk_waitUntil(sem_take(sem)); } while(0)
@@ -248,21 +263,6 @@ typedef uintptr_t evt_t;
 #define evt_wait(evt)              do { *(evt) = 0; tsk_waitUntil(*(evt)); } while(0)
 // set a new value (val) of the event (evt)
 #define evt_give(evt, val)         do { *(evt) = (val);                    } while(0)
-
-/* Mutex ==================================================================== */
-// definition of mutex
-typedef tsk_t *mtx_t;
-
-/* -------------------------------------------------------------------------- */
-// define and initialize the mutex (mtx)
-#define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
-/* -------------------------------------------------------------------------- */
-// try to lock the mutex (mtx); return true if the mutex was locked, otherwise return false
-#define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true))
-// wait for the mutex (mtx)
-#define mtx_wait(mtx)              do { tsk_waitUntil(mtx_take(mtx));     } while(0)
-// release previously owned mutex (mtx)
-#define mtx_give(mtx)              do { if (tsk_self(*(mtx))) *(mtx) = 0; } while(0)
 
 /* -------------------------------------------------------------------------- */
 
