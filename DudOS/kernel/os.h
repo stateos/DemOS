@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    05.08.2018
+    @date    06.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -210,6 +210,8 @@ typedef uint_fast8_t sem_t;
 // define and initialize the binary semaphore (sem) with initial value (ini)
 #define OS_SEM(sem, ini)                sem_t sem[] = { ini }
 /* -------------------------------------------------------------------------- */
+// try to lock the semaphore (sem); return true if the semaphore was locked, otherwise return false
+#define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
 // wait for the semaphore (sem)
 #define sem_wait(sem)              do { tsk_waitUntil(*(sem)); *(sem) = 0; } while(0)
 // release the semaphore (sem)
@@ -223,6 +225,8 @@ typedef uint_fast8_t sig_t;
 // define and initialize the protected signal (sig)
 #define OS_SIG(sig)                     sig_t sig[] = { 0 }
 /* -------------------------------------------------------------------------- */
+// get the signal (sig) value
+#define sig_take(sig)                 ( *(sig) )
 // wait for the signal (sig)
 #define sig_wait(sig)              do { tsk_waitUntil(*(sig)); } while(0)
 // release the signal (sig)
@@ -238,7 +242,7 @@ typedef uintptr_t evt_t;
 // define and initialize the event (evt)
 #define OS_EVT(evt)                     evt_t evt[] = { 0 }
 /* -------------------------------------------------------------------------- */
-// get a value of the event (evt)
+// get the event (evt) value
 #define evt_take(evt)                 ( *(evt) )
 // wait for a the new value of the event (evt)
 #define evt_wait(evt)              do { *(evt) = 0; tsk_waitUntil(*(evt)); } while(0)
@@ -253,6 +257,8 @@ typedef tsk_t *mtx_t;
 // define and initialize the mutex (mtx)
 #define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
 /* -------------------------------------------------------------------------- */
+// try to lock the mutex (mtx); return true if the mutex was locked, otherwise return false
+#define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true))
 // wait for the mutex (mtx)
 #define mtx_wait(mtx)              do { tsk_waitWhile(*(mtx)); *(mtx) = sys_current; } while(0)
 // release previously owned mutex (mtx)
