@@ -213,9 +213,9 @@ typedef uint_fast8_t sem_t;
 // try to lock the semaphore (sem); return true if the semaphore was locked, otherwise return false
 #define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
 // wait for the semaphore (sem)
-#define sem_wait(sem)              do { tsk_waitUntil(*(sem)); *(sem) = 0; } while(0)
+#define sem_wait(sem)              do { tsk_waitUntil(sem_take(sem)); } while(0)
 // release the semaphore (sem)
-#define sem_give(sem)              do { *(sem) = 1;                        } while(0)
+#define sem_give(sem)              do { *(sem) = 1;                   } while(0)
 
 /* Protected signal ========================================================= */
 // definition of protected signal
@@ -260,9 +260,9 @@ typedef tsk_t *mtx_t;
 // try to lock the mutex (mtx); return true if the mutex was locked, otherwise return false
 #define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true))
 // wait for the mutex (mtx)
-#define mtx_wait(mtx)              do { tsk_waitWhile(*(mtx)); *(mtx) = sys_current; } while(0)
+#define mtx_wait(mtx)              do { tsk_waitUntil(mtx_take(mtx));     } while(0)
 // release previously owned mutex (mtx)
-#define mtx_give(mtx)              do { if (tsk_self(*(mtx))) *(mtx) = 0;            } while(0)
+#define mtx_give(mtx)              do { if (tsk_self(*(mtx))) *(mtx) = 0; } while(0)
 
 /* -------------------------------------------------------------------------- */
 
