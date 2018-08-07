@@ -6,10 +6,10 @@ Features:
 - kernel works in cooperative mode only
 - tasks operate on the same stack
 - timers
+- mutexes
 - binary semaphores
 - protected signals
 - events
-- mutexes
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
 0.1
