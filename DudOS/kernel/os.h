@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    06.08.2018
+    @date    07.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -100,21 +100,22 @@ typedef enum   __tid { ID_RIP = 0, ID_RDY, ID_DLY } tid_t;
 // definition of task structure
 typedef struct __tsk { cnt_t tmr; tid_t id; tag_t state; fun_t *function; struct __tsk *next; } tsk_t;
 
+// task initializer
+#define TSK_INIT(fun)                   { 0, ID_RIP, 0, fun, 0 }
+
 extern
 tsk_t * sys_current;                 // system variable - current task
 void    tsk_start( tsk_t *tsk );     // system function - make task ready to execute
 
 /* -------------------------------------------------------------------------- */
 // for internal use; start the system scheduler
-#define SYS_START()                 do { if ((sys_current = sys_current->next)->id == ID_RDY) sys_current->function(); } while(1)
+#define SYS_START()                do { if ((sys_current = sys_current->next)->id == ID_RDY) sys_current->function(); } while(1)
 
 /* -------------------------------------------------------------------------- */
 // initialize the system timer and start the system scheduler
-#define sys_start()                 do { sys_init(); SYS_START(); } while(0)
+#define sys_start()                do { sys_init(); SYS_START(); } while(0)
 
 /* -------------------------------------------------------------------------- */
-// initialize a task structure with function (fun)
-#define TSK_INIT(fun)                   { 0, ID_RIP, 0, fun, 0 }
 // define and initialize the task (tsk) with function (fun)
 #define OS_TSK(tsk, fun)                tsk_t tsk[] = { TSK_INIT(fun) }
 // define and initialize the task (tsk); function body must be defined immediately below
