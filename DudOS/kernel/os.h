@@ -223,8 +223,13 @@ typedef tsk_t *mtx_t;
 typedef uint_fast8_t sem_t;
 
 /* -------------------------------------------------------------------------- */
+#ifndef __NO_DEFAULT
 // define and initialize the binary semaphore (sem) with initial value (default: 0)
 #define OS_SEM(sem, ...)                sem_t sem[] = { __VA_ARGS__ + 0 }
+#else
+// define and initialize the binary semaphore (sem) with initial value (ini)
+#define OS_SEM(sem, ini)                sem_t sem[] = { ini }
+#endif
 /* -------------------------------------------------------------------------- */
 // try to lock the semaphore (sem); return true if the semaphore was successfully locked
 #define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
