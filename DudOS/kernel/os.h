@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    07.08.2018
+    @date    16.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -223,15 +223,15 @@ typedef tsk_t *mtx_t;
 typedef uint_fast8_t sem_t;
 
 /* -------------------------------------------------------------------------- */
-// define and initialize the binary semaphore (sem) with initial value (ini)
-#define OS_SEM(sem, ini)                sem_t sem[] = { ini }
+// define and initialize the binary semaphore (sem) with initial value (default: 0)
+#define OS_SEM(sem, ...)                sem_t sem[] = { __VA_ARGS__ + 0 }
 /* -------------------------------------------------------------------------- */
 // try to lock the semaphore (sem); return true if the semaphore was successfully locked
 #define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
 // wait for the semaphore (sem)
 #define sem_wait(sem)              do { tsk_waitUntil(sem_take(sem)); } while(0)
 // release the semaphore (sem)
-#define sem_give(sem)              do { *(sem) = 1;                   } while(0)
+#define sem_give(sem)                 ( *(sem) ? false : ((*(sem) = 1), true) )
 
 /* Protected signal ========================================================= */
 // definition of protected signal

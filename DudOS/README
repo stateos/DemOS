@@ -23,3 +23,4 @@ Features:
 - added tsk_restart and tsk_restartFrom definitions
 - added sem_take, sig_take and mtx_take definitions
 - added examples
+- added optional initial parameter for semaphore create definitions
