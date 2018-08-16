@@ -249,11 +249,11 @@ typedef uint_fast8_t sig_t;
 // get the signal (sig) value
 #define sig_take(sig)                 ( *(sig) )
 // wait for the signal (sig)
-#define sig_wait(sig)              do { tsk_waitUntil(*(sig)); } while(0)
+#define sig_wait(sig)              do { tsk_waitUntil(sig_take(sig)); } while(0)
 // release the signal (sig)
-#define sig_give(sig)              do { *(sig) = 1;            } while(0)
+#define sig_give(sig)                 ( *(sig) ? false : ((*(sig) = 1), true) )
 // reset the signal (sig)
-#define sig_clear(sig)             do { *(sig) = 0;            } while(0)
+#define sig_clear(sig)                ( *(sig) ? ((*(sig) = 0), true) : false )
 
 /* Event ==================================================================== */
 // definition of event
