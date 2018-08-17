@@ -199,7 +199,7 @@ typedef cnt_t tmr_t;
 // start/restart the timer (tmr) and wait until the timer (tmr) finishes countdown for given duration of time (dly)
 #define tmr_waitFor(tmr, dly)      do { tmr_start(tmr); tsk_waitUntil(tmr_expiredFor(tmr, dly)); *(tmr) += (dly);  } while(0)
 // wait until the timer (tmr) finishes countdown for given duration of time (dly) from the end of the previous countdown
-#define tmr_waitNext(tmr, dly)     do { tsk_waitUntil(tmr_expiredFor(tmr, dly)); *(tmr) += (dly);                  } while(0)
+#define tmr_waitNext(tmr, dly)     do {                 tsk_waitUntil(tmr_expiredFor(tmr, dly)); *(tmr) += (dly);  } while(0)
 // start/restart the timer (tmr) and wait until the timer (tmr) finishes countdown until given timepoint (tim)
 #define tmr_waitUntil(tmr, tim)    do { tmr_start(tmr); tsk_waitUntil(tmr_expiredUntil(tmr, tim)); *(tmr) = (tim); } while(0)
 
@@ -226,7 +226,7 @@ typedef uint_fast8_t sem_t;
 #ifndef __NO_DEFAULT
 // define and initialize the binary semaphore (sem) with initial value (default: 0)
 #define OS_SEM(sem, ...)                sem_t sem[] = { __VA_ARGS__ + 0 }
-#else
+#else // bacause of ST7 cosmic compiler
 // define and initialize the binary semaphore (sem) with initial value (ini)
 #define OS_SEM(sem, ini)                sem_t sem[] = { ini }
 #endif
@@ -252,9 +252,9 @@ typedef uint_fast8_t sig_t;
 #define sig_take(sig)                 ( *(sig) )
 // wait for the signal (sig)
 #define sig_wait(sig)              do { tsk_waitUntil(sig_take(sig)); } while(0)
-// release the signal (sig)
+// try to release the signal (sig); return true if the semaphore was successfully released
 #define sig_give(sig)                 ( *(sig) ? false : ((*(sig) = 1), true) )
-// reset the signal (sig)
+// try to reset the signal (sig); return true if the semaphore was successfully reseted
 #define sig_clear(sig)                ( *(sig) ? ((*(sig) = 0), true) : false )
 
 /* Event ==================================================================== */
