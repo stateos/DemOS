@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    16.08.2018
+    @date    17.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -75,7 +75,7 @@ typedef void * tag_t;
 
 #define TSK_CONCATENATE(tag)            Line ## tag
 #define TSK_LABEL(tag)                  TSK_CONCATENATE(tag)
-#define TSK_STATE(tag)               && TSK_LABEL(tag)
+#define TSK_STATE(tag)                  sys_current->state = && TSK_LABEL(tag)
 #define TSK_BEGIN()                     if (sys_current->state) goto *sys_current->state
 #define TSK_END()
 
@@ -86,7 +86,7 @@ typedef void * tag_t;
 typedef intptr_t tag_t;
 
 #define TSK_LABEL(tag)                  /* falls through */ case tag
-#define TSK_STATE(tag)                  tag
+#define TSK_STATE(tag)                  sys_current->state = tag
 #define TSK_BEGIN()                     switch (sys_current->state) { case 0:
 #define TSK_END()                       }
 
@@ -129,9 +129,9 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
                                         void tsk ## __fun( void )
 /* -------------------------------------------------------------------------- */
 // for internal use; wait while the condition (cnd) is true
-#define TSK_WHILE(cnd)                  sys_current->state = TSK_STATE(__LINE__); TSK_LABEL(__LINE__): if (cnd) return; (void)0
+#define TSK_WHILE(cnd)                  TSK_STATE(__LINE__); TSK_LABEL(__LINE__): if (cnd) return; (void)0
 // for internal use; pass control to the next ready task if the condition (cnd) is true
-#define TSK_YIELD(cnd)                  sys_current->state = TSK_STATE(__LINE__); if (cnd) return; TSK_LABEL(__LINE__): (void)0
+#define TSK_YIELD(cnd)                  TSK_STATE(__LINE__); if (cnd) return; TSK_LABEL(__LINE__): (void)0
 /* -------------------------------------------------------------------------- */
 // return the current task
 #define tsk_this()                    ( sys_current )
@@ -212,7 +212,7 @@ typedef tsk_t *mtx_t;
 #define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
 /* -------------------------------------------------------------------------- */
 // try to lock the mutex (mtx); return true if the mutex was successfully locked
-#define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true))
+#define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true) )
 // wait for the mutex (mtx)
 #define mtx_wait(mtx)              do { tsk_waitUntil(mtx_take(mtx)); } while(0)
 // release previously owned mutex (mtx); return true if the mutex was successfully unlocked
