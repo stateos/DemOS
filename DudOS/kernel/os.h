@@ -233,10 +233,12 @@ typedef uint_fast8_t sem_t;
 /* -------------------------------------------------------------------------- */
 // try to lock the semaphore (sem); return true if the semaphore was successfully locked
 #define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
-// wait for the semaphore (sem)
+// wait for the released semaphore (sem) and lock it
 #define sem_wait(sem)              do { tsk_waitUntil(sem_take(sem)); } while(0)
-// release the semaphore (sem)
+// try to release the semaphore (sem); return true if the semaphore was successfully released
 #define sem_give(sem)                 ( *(sem) ? false : ((*(sem) = 1), true) )
+// wait for the locked semaphore (sem) and release it
+#define sem_send(sem)              do { tsk_waitUntil(sem_give(sem)); } while(0)
 
 /* Protected signal ========================================================= */
 // definition of protected signal
