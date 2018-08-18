@@ -7,9 +7,9 @@ OS_TSK_DEF(sla)
 {
 	tsk_begin();
 
-	sig_take(sig);
 	sig_wait(sig);
 	LED_Tick();
+	sig_take(sig);
 
 	tsk_end();
 }
