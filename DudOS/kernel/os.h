@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    17.08.2018
+    @date    18.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -211,11 +211,11 @@ typedef tsk_t *mtx_t;
 // define and initialize the mutex (mtx)
 #define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
 /* -------------------------------------------------------------------------- */
-// try to lock the mutex (mtx); return true if the mutex was successfully locked
+// try to lock the mutex (mtx); return true if the mutex has been successfully locked
 #define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true) )
-// wait for the mutex (mtx)
-#define mtx_wait(mtx)              do { tsk_waitUntil(mtx_take(mtx)); } while(0)
-// release previously owned mutex (mtx); return true if the mutex was successfully unlocked
+// wait for the released mutex (mtx) and lock it
+#define mtx_wait(mtx)                   tsk_waitUntil(mtx_take(mtx))
+// release previously owned mutex (mtx); return true if the mutex has been successfully released
 #define mtx_give(mtx)                 ( tsk_self(*(mtx)) ? ((*(mtx) = 0), true) : false )
 
 /* Binary semaphore ========================================================= */
@@ -231,14 +231,18 @@ typedef uint_fast8_t sem_t;
 #define OS_SEM(sem, ini)                sem_t sem[] = { ini }
 #endif
 /* -------------------------------------------------------------------------- */
-// try to lock the semaphore (sem); return true if the semaphore was successfully locked
-#define sem_take(sem)                 ( *(sem) ? ((*(sem) = 0), true) : false )
+// return true if the semaphore (sem) is released
+#define sem_given(sem)                ( *(sem) != 0 )
+// try to lock the semaphore (sem); return true if the semaphore has been successfully locked
+#define sem_take(sem)                 ( sem_given(sem) ? ((*(sem) = 0), true) : false )
 // wait for the released semaphore (sem) and lock it
-#define sem_wait(sem)              do { tsk_waitUntil(sem_take(sem)); } while(0)
-// try to release the semaphore (sem); return true if the semaphore was successfully released
-#define sem_give(sem)                 ( *(sem) ? false : ((*(sem) = 1), true) )
+#define sem_wait(sem)                   tsk_waitUntil(sem_take(sem))
+// return true if the semaphore (sem) is locked
+#define sem_taken(sem)                ( *(sem) == 0 )
+// try to release the semaphore (sem); return true if the semaphore has been successfully released
+#define sem_give(sem)                 ( sem_taken(sem) ? ((*(sem) = 1), true) : false )
 // wait for the locked semaphore (sem) and release it
-#define sem_send(sem)              do { tsk_waitUntil(sem_give(sem)); } while(0)
+#define sem_send(sem)                   tsk_waitUntil(sem_give(sem))
 
 /* Protected signal ========================================================= */
 // definition of protected signal
@@ -248,14 +252,18 @@ typedef uint_fast8_t sig_t;
 // define and initialize the protected signal (sig)
 #define OS_SIG(sig)                     sig_t sig[] = { 0 }
 /* -------------------------------------------------------------------------- */
-// get the signal (sig) value
-#define sig_take(sig)                 ( *(sig) )
-// wait for the signal (sig)
-#define sig_wait(sig)              do { tsk_waitUntil(sig_take(sig)); } while(0)
-// try to release the signal (sig); return true if the semaphore was successfully released
-#define sig_give(sig)                 ( *(sig) ? false : ((*(sig) = 1), true) )
-// try to reset the signal (sig); return true if the semaphore was successfully reseted
-#define sig_clear(sig)                ( *(sig) ? ((*(sig) = 0), true) : false )
+// return true if the signal (sig) is set
+#define sig_given(sig)                ( *(sig) != 0 )
+// try to reset the signal (sig); return true if the signal has been successfully reset
+#define sig_take(sig)                 ( sig_given(sig) ? ((*(sig) = 0), true) : false )
+// wait for the signal (sig) to be set
+#define sig_wait(sig)                   tsk_waitUntil(sig_given(sig))
+// return true if the signal (sig) is reset
+#define sig_taken(sig)                ( *(sig) == 0 )
+// try to set the signal (sig); return true if the signal has been successfully set
+#define sig_give(sig)                 ( sig_taken(sig) ? ((*(sig) = 1), true) : false )
+// wait for the signal (sig) to be reset
+#define sig_peek(sig)                   tsk_waitUntil(sig_taken(sig))
 
 /* Event ==================================================================== */
 // definition of event
