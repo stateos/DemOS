@@ -18,6 +18,7 @@ OS_TSK_DEF(mas)
 {
 	tsk_begin();
 
+	sig_look(sig);
 	tsk_delay(SEC);
 	sig_give(sig);
 

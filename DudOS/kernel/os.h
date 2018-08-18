@@ -263,7 +263,7 @@ typedef uint_fast8_t sig_t;
 // try to set the signal (sig); return true if the signal has been successfully set
 #define sig_give(sig)                 ( sig_taken(sig) ? ((*(sig) = 1), true) : false )
 // wait for the signal (sig) to be reset
-#define sig_peek(sig)                   tsk_waitUntil(sig_taken(sig))
+#define sig_look(sig)                   tsk_waitUntil(sig_taken(sig))
 
 /* Event ==================================================================== */
 // definition of event
