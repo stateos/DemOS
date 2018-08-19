@@ -253,22 +253,13 @@ typedef uint_fast8_t sig_t;
 #define OS_SIG(sig)                     sig_t sig[] = { 0 }
 /* -------------------------------------------------------------------------- */
 // return true if the signal (sig) is set
-#define sig_given(sig)                ( *(sig) != 0 )
+#define sig_take(sig)                 ( *(sig) != 0 )
 // try to reset the signal (sig); return true if the signal has been successfully reset
-#define sig_take(sig)                 ( sig_given(sig) ? ((*(sig) = 0), true) : false )
-#define sig_reset(sig)                  sig_take(sig)
-#define sig_clear(sig)                  sig_take(sig)
+#define sig_clear(sig)                ( sig_take(sig) ? ((*(sig) = 0), true) : false )
 // wait for the signal (sig) to be set
-#define sig_wait(sig)                   tsk_waitUntil(sig_given(sig))
-#define sig_until(sig)                  tsk_waitUntil(sig_given(sig))
-// return true if the signal (sig) is reset
-#define sig_taken(sig)                ( *(sig) == 0 )
+#define sig_wait(sig)                   tsk_waitUntil(sig_take(sig))
 // try to set the signal (sig); return true if the signal has been successfully set
-#define sig_give(sig)                 ( sig_taken(sig) ? ((*(sig) = 1), true) : false )
-#define sig_set(sig)                    sig_give(sig)
-// wait for the signal (sig) to be reset
-#define sig_look(sig)                   tsk_waitUntil(sig_taken(sig))
-#define sig_while(sig)                  tsk_waitWhile(sig_given(sig))
+#define sig_give(sig)                 ( sig_take(sig) ? false : ((*(sig) = 1), true) )
 
 /* Event ==================================================================== */
 // definition of event

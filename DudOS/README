@@ -25,4 +25,3 @@ Features:
 - added examples
 - added optional initial parameter for semaphore create definitions
 - added sem_send definition
-- added aliases for signal definitions
