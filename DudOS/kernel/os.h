@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    18.08.2018
+    @date    19.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -256,14 +256,19 @@ typedef uint_fast8_t sig_t;
 #define sig_given(sig)                ( *(sig) != 0 )
 // try to reset the signal (sig); return true if the signal has been successfully reset
 #define sig_take(sig)                 ( sig_given(sig) ? ((*(sig) = 0), true) : false )
+#define sig_reset(sig)                  sig_take(sig)
+#define sig_clear(sig)                  sig_take(sig)
 // wait for the signal (sig) to be set
 #define sig_wait(sig)                   tsk_waitUntil(sig_given(sig))
+#define sig_until(sig)                  tsk_waitUntil(sig_given(sig))
 // return true if the signal (sig) is reset
 #define sig_taken(sig)                ( *(sig) == 0 )
 // try to set the signal (sig); return true if the signal has been successfully set
 #define sig_give(sig)                 ( sig_taken(sig) ? ((*(sig) = 1), true) : false )
+#define sig_set(sig)                    sig_give(sig)
 // wait for the signal (sig) to be reset
 #define sig_look(sig)                   tsk_waitUntil(sig_taken(sig))
+#define sig_while(sig)                  tsk_waitWhile(sig_given(sig))
 
 /* Event ==================================================================== */
 // definition of event
