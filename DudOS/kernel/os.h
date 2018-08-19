@@ -55,11 +55,21 @@ extern "C" {
 
 /* System =================================================================== */
 
-#define MSEC                  1      // time multiplier given in milliseconds
-#define SEC                1000      // time multiplier given in seconds
-#define MIN               60000      // time multiplier given in minutes
+#ifndef CLOCKS_PER_SEC
+#define CLOCKS_PER_SEC     1000
+#endif
+
+#if (CLOCKS_PER_SEC)/1000000 > 0
+#define USEC       (cnt_t)((CLOCKS_PER_SEC)/1000000) // time multiplier given in microseconds
+#endif
+#if (CLOCKS_PER_SEC)/1000 > 0
+#define MSEC       (cnt_t)((CLOCKS_PER_SEC)/1000)    // time multiplier given in milliseconds
+#endif
+#define SEC        ((cnt_t)(CLOCKS_PER_SEC))         // time multiplier given in seconds
+#define MIN        ((cnt_t)(CLOCKS_PER_SEC)*60)      // time multiplier given in minutes
+
 #ifndef INFINITE
-#define INFINITE           ( ~0UL )  // time value for infinite wait
+#define INFINITE  (~(cnt_t)0)                        // time value for infinite wait
 #endif
 /* -------------------------------------------------------------------------- */
 extern volatile

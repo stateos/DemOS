@@ -32,7 +32,7 @@
 #ifndef __DUDOSPORT_H
 #define __DUDOSPORT_H
 
-#include <windows.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +40,7 @@ extern "C" {
 
 /* --------------------------------------------------------------------------------------------- */
 
-typedef uint32_t cnt_t;
+typedef clock_t cnt_t;
 
 /* --------------------------------------------------------------------------------------------- */
 

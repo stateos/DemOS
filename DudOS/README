@@ -26,3 +26,4 @@ Features:
 - added optional initial parameter for semaphore create definitions
 - added sem_send definition
 - added job object and examples
+- updated x86 port
