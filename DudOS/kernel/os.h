@@ -276,6 +276,23 @@ typedef uintptr_t evt_t;
 // set a new value (val) of the event (evt)
 #define evt_give(evt, val)         do { *(evt) = (val);                    } while(0)
 
+/* Job ====================================================================== */
+// definition of job
+typedef fun_t *job_t;
+
+/* -------------------------------------------------------------------------- */
+// define and initialize the job (job)
+#define OS_JOB(job)                     job_t job[] = { 0 }
+/* -------------------------------------------------------------------------- */
+// try to take a function from the job (job); return true if the function has been successfully taken and executed
+#define job_take(job)                 ( *(job) ? ((*(job))(), *(job) = 0, true) : false )
+// wait for a the new job (job) function, execute it and release the job
+#define job_wait(job)                   tsk_waitUntil(job_take(job))
+// try to give the new function (fun) to the job (job); return true if the function has been successfully given
+#define job_give(job, fun)            ( *(job) ? false : (*(job) = (fun), true) )
+// wait for the released job (job) and give it a new function (fun)
+#define job_send(job, fun)              tsk_waitUntil(job_give(job, fun))
+
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus

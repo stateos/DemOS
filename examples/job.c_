@@ -1,0 +1,37 @@
+#include <stm32f4_discovery.h>
+#include <os.h>
+
+OS_JOB(job);
+
+void proc()
+{
+	LED_Tick();
+}
+
+OS_TSK_DEF(sla)
+{
+	tsk_begin();
+
+	job_wait(job);
+
+	tsk_end();
+}
+
+OS_TSK_DEF(mas)
+{
+	tsk_begin();
+
+	tsk_delay(SEC);
+	job_give(job, proc);
+
+	tsk_end();
+}
+
+int main()
+{
+	LED_Init();
+
+	tsk_start(sla);
+	tsk_start(mas);
+	sys_start();
+}
