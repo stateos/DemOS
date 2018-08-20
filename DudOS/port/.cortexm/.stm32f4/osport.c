@@ -2,7 +2,7 @@
 
     @file    DudOS: osport.c
     @author  Rajmund Szymanski
-    @date    28.07.2018
+    @date    20.08.2018
     @brief   DudOS port file for STM32F4 uC.
 
  ******************************************************************************
@@ -33,10 +33,16 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
+#ifndef USE_HAL_DRIVER
+
 volatile
 cnt_t sys_counter = 0;
 
+#endif
+
 /* --------------------------------------------------------------------------------------------- */
+
+#ifndef USE_HAL_DRIVER
 
 void SysTick_Handler( void )
 {
@@ -44,11 +50,15 @@ void SysTick_Handler( void )
 	sys_counter++;
 }
 
+#endif
+
 /* --------------------------------------------------------------------------------------------- */
 
 void sys_init( void )
 {
+#ifndef USE_HAL_DRIVER
 	SysTick_Config(SystemCoreClock/1000);
+#endif
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -56,7 +66,11 @@ void sys_init( void )
 cnt_t sys_time( void )
 {
 	cnt_t cnt;
+#ifndef USE_HAL_DRIVER
 	cnt = sys_counter;
+#else
+	cnt = HAL_GetTick();
+#endif
 	return cnt;
 }
 

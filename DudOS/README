@@ -27,3 +27,4 @@ Features:
 - added sem_send definition
 - added job object and examples
 - updated x86 port
+- updated cortex-m port for use with the HAL driver
