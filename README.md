@@ -23,7 +23,7 @@ Target: ARM Cortex-M, STM8, ST7, AVR8, x86/x64.
 
 ### Targets
 
-CM0(+), CM3, CM4(F), CM7, STM8, ST7, AVR8, Win32/64
+CM0(+), CM3, CM4(F), CM7, STM8, ST7, AVR8, x86/x64
 
 ### License
 
