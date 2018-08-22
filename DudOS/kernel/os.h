@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    20.08.2018
+    @date    22.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -55,22 +55,23 @@ extern "C" {
 
 /* System =================================================================== */
 
-#ifndef CLOCKS_PER_SEC
-#define CLOCKS_PER_SEC    1000
+#ifndef OS_FREQUENCY
+#define OS_FREQUENCY  1000
 #endif
 
-#if (CLOCKS_PER_SEC)/1000000 > 0
-#define USEC       (cnt_t)((CLOCKS_PER_SEC)/1000000) // time multiplier given in microseconds
+#if    (OS_FREQUENCY)/1000000 > 0
+#define USEC       (cnt_t)((OS_FREQUENCY)/1000000) // time multiplier given in microseconds
 #endif
-#if (CLOCKS_PER_SEC)/1000 > 0
-#define MSEC       (cnt_t)((CLOCKS_PER_SEC)/1000)    // time multiplier given in milliseconds
+#if    (OS_FREQUENCY)/1000 > 0
+#define MSEC       (cnt_t)((OS_FREQUENCY)/1000)    // time multiplier given in milliseconds
 #endif
-#define SEC        ((cnt_t)(CLOCKS_PER_SEC))         // time multiplier given in seconds
-#define MIN        ((cnt_t)(CLOCKS_PER_SEC)*60)      // time multiplier given in minutes
+#define SEC        ((cnt_t)(OS_FREQUENCY))         // time multiplier given in seconds
+#define MIN        ((cnt_t)(OS_FREQUENCY)*60)      // time multiplier given in minutes
 
 #ifndef INFINITE
-#define INFINITE    (~(cnt_t)0)                      // time value for infinite wait
+#define INFINITE   (~(cnt_t)0)                     // time value for infinite wait
 #endif
+
 /* -------------------------------------------------------------------------- */
 extern volatile
 cnt_t   sys_counter;                 // port variable - system time counter
