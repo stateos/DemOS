@@ -2,7 +2,7 @@
 
     @file    DudOS: os.h
     @author  Rajmund Szymanski
-    @date    22.08.2018
+    @date    28.08.2018
     @brief   This file provides set of functions for DudOS.
 
  ******************************************************************************
@@ -234,13 +234,8 @@ typedef tsk_t *mtx_t;
 typedef uint_fast8_t sem_t;
 
 /* -------------------------------------------------------------------------- */
-#ifndef __NO_DEFAULT
-// define and initialize the binary semaphore (sem) with initial value (default: 0)
-#define OS_SEM(sem, ...)                sem_t sem[] = { __VA_ARGS__ + 0 }
-#else // bacause of ST7 cosmic compiler
 // define and initialize the binary semaphore (sem) with initial value (ini)
 #define OS_SEM(sem, ini)                sem_t sem[] = { ini }
-#endif
 /* -------------------------------------------------------------------------- */
 // return true if the semaphore (sem) is released
 #define sem_given(sem)                ( *(sem) != 0 )
