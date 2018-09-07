@@ -13,9 +13,6 @@ Features:
 - events
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
-0.1
-- initial release
----------
 0.2
 - added tsk_callFrom definition
 - updated descriptions
@@ -28,3 +25,6 @@ Features:
 - added job object and examples
 - updated x86/x64 port
 - updated cortex-m port for use with the HAL driver
+---------
+0.1
+- initial release
