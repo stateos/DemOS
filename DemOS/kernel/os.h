@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    03.09.2018
+    @date    09.09.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 #ifndef __DEMOS
 
 #define __DEMOS_MAJOR        0
-#define __DEMOS_MINOR        2
+#define __DEMOS_MINOR        3
 #define __DEMOS_BUILD        0
 
 #define __DEMOS        ((((__DEMOS_MAJOR)&0xFFUL)<<24)|(((__DEMOS_MINOR)&0xFFUL)<<16)|((__DEMOS_BUILD)&0xFFFFUL))
@@ -224,10 +224,16 @@ typedef tsk_t *mtx_t;
 /* -------------------------------------------------------------------------- */
 // try to lock the mutex (mtx); return true if the mutex has been successfully locked
 #define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true) )
+// alias
+#define mtx_tryLock(mtx)                mtx_take(mtx)
 // wait for the released mutex (mtx) and lock it
 #define mtx_wait(mtx)                   tsk_waitUntil(mtx_take(mtx))
+// alias
+#define mtx_lock(mtx)                   mtx_wait(mtx)
 // release previously owned mutex (mtx); return true if the mutex has been successfully released
 #define mtx_give(mtx)                 ( tsk_self(*(mtx)) ? ((*(mtx) = 0), true) : false )
+// alias
+#define mtx_unlock(mtx)                 mtx_give(mtx)
 
 /* Binary semaphore ========================================================= */
 // definition of binary semaphore
@@ -241,12 +247,16 @@ typedef uint_fast8_t sem_t;
 #define sem_given(sem)                ( *(sem) != 0 )
 // try to lock the semaphore (sem); return true if the semaphore has been successfully locked
 #define sem_take(sem)                 ( sem_given(sem) ? ((*(sem) = 0), true) : false )
+// alias
+#define sem_tryWait(sem)                sem_take(sem)
 // wait for the released semaphore (sem) and lock it
 #define sem_wait(sem)                   tsk_waitUntil(sem_take(sem))
 // return true if the semaphore (sem) is locked
 #define sem_taken(sem)                ( *(sem) == 0 )
 // try to release the semaphore (sem); return true if the semaphore has been successfully released
 #define sem_give(sem)                 ( sem_taken(sem) ? ((*(sem) = 1), true) : false )
+// alias
+#define sem_post(sem)                   sem_post(sem)
 // wait for the locked semaphore (sem) and release it
 #define sem_send(sem)                   tsk_waitUntil(sem_give(sem))
 
@@ -260,12 +270,16 @@ typedef uint_fast8_t sig_t;
 /* -------------------------------------------------------------------------- */
 // return true if the signal (sig) is set
 #define sig_take(sig)                 ( *(sig) != 0 )
+// alias
+#define sig_tryWait(sig)                sig_take(sig)
 // try to reset the signal (sig); return true if the signal has been successfully reset
 #define sig_clear(sig)                ( sig_take(sig) ? ((*(sig) = 0), true) : false )
 // wait for the signal (sig) to be set
 #define sig_wait(sig)                   tsk_waitUntil(sig_take(sig))
 // try to set the signal (sig); return true if the signal has been successfully set
 #define sig_give(sig)                 ( sig_take(sig) ? false : ((*(sig) = 1), true) )
+// alias
+#define sig_set(sig)                    sig_give(sig)
 
 /* Event ==================================================================== */
 // definition of event
@@ -292,6 +306,8 @@ typedef fun_t *job_t;
 /* -------------------------------------------------------------------------- */
 // try to take a function from the job (job); return true if the function has been successfully taken and executed
 #define job_take(job)                 ( *(job) ? ((*(job))(), *(job) = 0, true) : false )
+// alias
+#define job_tryWait(job)                job_take(job)
 // wait for a the new job (job) function, execute it and release the job
 #define job_wait(job)                   tsk_waitUntil(job_take(job))
 // try to give the new function (fun) to the job (job); return true if the function has been successfully given

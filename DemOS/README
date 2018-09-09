@@ -13,6 +13,9 @@ Features:
 - events
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+0.3
+- added a few function aliases
+---------
 0.2
 - added tsk_callFrom definition
 - updated descriptions
