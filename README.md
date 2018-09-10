@@ -16,6 +16,7 @@ Target: ARM Cortex-M, STM8, ST7, AVR8, x86/x64.
 - protected signals
 - events
 - jobs
+- once flags
 - all documentation is contained within the source files
 - examples and templates are in separate repositories on [GitHub](https://github.com/stateos)
 

@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    09.09.2018
+    @date    10.09.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -314,6 +314,17 @@ typedef fun_t *job_t;
 #define job_give(job, fun)            ( *(job) ? false : (*(job) = (fun), true) )
 // wait for the released job (job) and give it a new function (fun)
 #define job_send(job, fun)              tsk_waitUntil(job_give(job, fun))
+
+/* Once flag ================================================================ */
+// definition of once flag
+typedef uint_fast8_t one_t;
+
+/* -------------------------------------------------------------------------- */
+// define and initialize the once flag (one)
+#define OS_ONE(one)                     one_t one[] = { 0 }
+/* -------------------------------------------------------------------------- */
+// try to execute function (fun); if the once flag (one) has been previously set, the function is not executed
+#define one_call(one, fun)         do { if (*(one) == 0) { (fun)(); *(one) = 1; } } while(0)
 
 /* -------------------------------------------------------------------------- */
 

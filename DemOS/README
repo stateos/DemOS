@@ -11,10 +11,13 @@ Features:
 - binary semaphores
 - protected signals
 - events
+- jobs
+- once flags
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
 0.3
 - added a few function aliases
+- added once flag object
 ---------
 0.2
 - added tsk_callFrom definition
