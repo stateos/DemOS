@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    10.09.2018
+    @date    19.09.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -272,10 +272,10 @@ typedef uint_fast8_t sig_t;
 #define sig_take(sig)                 ( *(sig) != 0 )
 // alias
 #define sig_tryWait(sig)                sig_take(sig)
-// try to reset the signal (sig); return true if the signal has been successfully reset
-#define sig_clear(sig)                ( sig_take(sig) ? ((*(sig) = 0), true) : false )
 // wait for the signal (sig) to be set
 #define sig_wait(sig)                   tsk_waitUntil(sig_take(sig))
+// try to reset the signal (sig); return true if the signal has been successfully reset
+#define sig_clear(sig)                ( sig_take(sig) ? ((*(sig) = 0), true) : false )
 // try to set the signal (sig); return true if the signal has been successfully set
 #define sig_give(sig)                 ( sig_take(sig) ? false : ((*(sig) = 1), true) )
 // alias
