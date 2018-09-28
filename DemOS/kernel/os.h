@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    19.09.2018
+    @date    28.09.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -262,24 +262,24 @@ typedef uint_fast8_t sem_t;
 
 /* Protected signal ========================================================= */
 // definition of protected signal
-typedef uint_fast8_t sig_t;
+typedef unsigned sig_t;
 
 /* -------------------------------------------------------------------------- */
 // define and initialize the protected signal (sig)
 #define OS_SIG(sig)                     sig_t sig[] = { 0 }
 /* -------------------------------------------------------------------------- */
-// return true if the signal (sig) is set
-#define sig_take(sig)                 ( *(sig) != 0 )
+// return true if the signal number (num) of signal object (sig) is set
+#define sig_take(sig, num)            ( (*(sig) & (1U<<(num))) != 0 )
 // alias
-#define sig_tryWait(sig)                sig_take(sig)
+#define sig_tryWait(sig, num)           sig_take(sig, num)
 // wait for the signal (sig) to be set
-#define sig_wait(sig)                   tsk_waitUntil(sig_take(sig))
+#define sig_wait(sig, num)              tsk_waitUntil(sig_take(sig, num))
 // try to reset the signal (sig); return true if the signal has been successfully reset
-#define sig_clear(sig)                ( sig_take(sig) ? ((*(sig) = 0), true) : false )
+#define sig_clear(sig, num)           ( sig_take(sig, num) ? ((*(sig) &= ~(1U<<(num))), true) : false )
 // try to set the signal (sig); return true if the signal has been successfully set
-#define sig_give(sig)                 ( sig_take(sig) ? false : ((*(sig) = 1), true) )
+#define sig_give(sig, num)            ( sig_take(sig, num) ? false : ((*(sig) |= (1U<<(num))), true) )
 // alias
-#define sig_set(sig)                    sig_give(sig)
+#define sig_set(sig, num)               sig_give(sig, num)
 
 /* Event ==================================================================== */
 // definition of event

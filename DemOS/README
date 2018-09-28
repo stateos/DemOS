@@ -18,6 +18,7 @@ Features:
 0.3
 - added a few function aliases
 - added once flag object
+- updated signal object
 ---------
 0.2
 - added tsk_callFrom definition
