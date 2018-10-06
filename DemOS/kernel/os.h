@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    28.09.2018
+    @date    06.10.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -146,6 +146,8 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 /* -------------------------------------------------------------------------- */
 // return the current task
 #define tsk_this()                    ( sys_current )
+// alias
+#define cur_task()                    ( sys_current )
 // check whether the task (tsk) is the current task
 #define tsk_self(tsk)                 ( sys_current == (tsk) )
 // necessary prologue of the task
@@ -170,10 +172,16 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 #define tsk_stop()                 do { sys_current->id = ID_RIP; return;                                          } while(0)
 // stop the task (tsk); it will no longer be executed
 #define tsk_kill(tsk)              do { (tsk)->id = ID_RIP; if (tsk_self(tsk)) return;                             } while(0)
+// stop the current task; it will no longer be executed
+#define cur_kill()                 do { tsk_this()->id = ID_RIP; return;                                           } while(0)
 // restart the task (tsk) from the initial state
 #define tsk_restart(tsk)           do { if (tsk_self(tsk)) tsk_again(); tsk_kill(tsk); tsk_start(tsk);             } while(0)
+// restart the current task from the initial state
+#define cur_restart()              do { tsk_again();                                                               } while(0)
 // restart the task (tsk) with function (fun)
 #define tsk_restartFrom(tsk, fun)  do { if (tsk_self(tsk)) tsk_flip(fun); tsk_kill(tsk); tsk_startFrom(tsk, fun);  } while(0)
+// restart the current task with function (fun)
+#define cur_restartFrom(fun)       do { tsk_flip(fun);                                                             } while(0)
 // pass control to the next ready task
 #define tsk_yield()                do { TSK_YIELD(true);                                                           } while(0)
 // restart the current task with function (fun)
@@ -190,6 +198,8 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 #define tsk_delay(dly)             do { tsk_sleepFor(dly);                                                         } while(0)
 // suspend execution of the ready task (tsk)
 #define tsk_suspend(tsk)           do { if ((tsk)->id == ID_RDY) { (tsk)->id = ID_DLY; TSK_YIELD(tsk_self(tsk)); } } while(0)
+// suspend execution of the current task
+#define cur_suspend()              do { tsk_this()->id = ID_DLY; TSK_YIELD(true);                                  } while(0)
 // resume execution of the suspended task (tsk)
 #define tsk_resume(tsk)            do { if ((tsk)->id == ID_DLY) { (tsk)->id = ID_RDY; }                           } while(0)
 
