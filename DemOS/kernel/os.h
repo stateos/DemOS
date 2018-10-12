@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    06.10.2018
+    @date    12.10.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -274,22 +274,24 @@ typedef uint_fast8_t sem_t;
 // definition of protected signal
 typedef unsigned sig_t;
 
+#define SIGSET(signo) (1U << (signo))   // signal mask from the signal number
+#define SIGALL        (~0U)             // signal mask for all signals
 /* -------------------------------------------------------------------------- */
 // define and initialize the protected signal (sig)
 #define OS_SIG(sig)                     sig_t sig[] = { 0 }
 /* -------------------------------------------------------------------------- */
 // return true if the signal number (num) of signal object (sig) is set
-#define sig_take(sig, num)            ( (*(sig) & (1U<<(num))) != 0 )
+#define sig_take(sig, sigset)         ( (*(sig) & (sigset)) != 0 )
 // alias
-#define sig_tryWait(sig, num)           sig_take(sig, num)
+#define sig_tryWait(sig, sigset)        sig_take(sig, sigset)
 // wait for the signal (sig) to be set
-#define sig_wait(sig, num)              tsk_waitUntil(sig_take(sig, num))
+#define sig_wait(sig, sigset)           tsk_waitUntil(sig_take(sig, sigset))
 // try to reset the signal (sig); return true if the signal has been successfully reset
-#define sig_clear(sig, num)           ( sig_take(sig, num) ? ((*(sig) &= ~(1U<<(num))), true) : false )
+#define sig_clear(sig, signo)         ( sig_take(sig, SIGSET(signo)) ? ((*(sig) &= ~SIGSET(signo)), true) : false )
 // try to set the signal (sig); return true if the signal has been successfully set
-#define sig_give(sig, num)            ( sig_take(sig, num) ? false : ((*(sig) |= (1U<<(num))), true) )
+#define sig_give(sig, signo)          ( sig_take(sig, SIGSET(signo)) ? false : ((*(sig) |= SIGSET(signo)), true) )
 // alias
-#define sig_set(sig, num)               sig_give(sig, num)
+#define sig_set(sig, signo)             sig_give(sig, signo)
 
 /* Event ==================================================================== */
 // definition of event
