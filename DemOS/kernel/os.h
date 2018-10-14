@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    12.10.2018
+    @date    14.10.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -46,6 +46,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <limits.h>
 #include <stdbool.h>
 #include "osport.h"
 
@@ -274,8 +275,10 @@ typedef uint_fast8_t sem_t;
 // definition of protected signal
 typedef unsigned sig_t;
 
-#define SIGSET(signo) (1U << (signo))   // signal mask from the signal number
-#define SIGALL        (0U-1)            // signal mask for all signals
+#define UINT_BIT      (sizeof(unsigned) * CHAR_BIT)
+
+#define SIGSET(signo) (((signo) < UINT_BIT) ? 1U << (signo) : 0U)   // signal mask from the given signal number
+#define sigAll        (0U-1)                                        // signal mask for all signals
 /* -------------------------------------------------------------------------- */
 // define and initialize the protected signal (sig)
 #define OS_SIG(sig)                     sig_t sig[] = { 0 }
