@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    14.10.2018
+    @date    19.10.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -277,8 +277,8 @@ typedef unsigned sig_t;
 
 #define SIG_LIMIT     (sizeof(unsigned) * CHAR_BIT)
 
-#define SIGSET(signo) ((((signo)-1) < SIG_LIMIT) ? 1U<<((signo)-1) : 0U) // signal mask from the given signal number
-#define sigAll        (0U-1)                                             // signal mask for all signals
+#define SIGSET(signo) (((signo) < SIG_LIMIT) ? 1U << (signo) : 0U) // signal mask from the given signal number
+#define sigAll        (0U-1)                                       // signal mask for all signals
 
 /* -------------------------------------------------------------------------- */
 // define and initialize the protected signal (sig)
