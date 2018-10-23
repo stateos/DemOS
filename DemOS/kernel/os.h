@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    19.10.2018
+    @date    23.10.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -32,7 +32,7 @@
 #ifndef __DEMOS
 
 #define __DEMOS_MAJOR        0
-#define __DEMOS_MINOR        3
+#define __DEMOS_MINOR        4
 #define __DEMOS_BUILD        0
 
 #define __DEMOS        ((((__DEMOS_MAJOR)&0xFFUL)<<24)|(((__DEMOS_MINOR)&0xFFUL)<<16)|((__DEMOS_BUILD)&0xFFFFUL))
