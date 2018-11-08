@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    23.10.2018
+    @date    08.11.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -174,7 +174,7 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 // stop the task (tsk); it will no longer be executed
 #define tsk_kill(tsk)              do { (tsk)->id = ID_RIP; if (tsk_self(tsk)) return;                             } while(0)
 // stop the current task; it will no longer be executed
-#define cur_kill()                 do { tsk_this()->id = ID_RIP; return;                                           } while(0)
+#define cur_kill()                 do { sys_current->id = ID_RIP; return;                                          } while(0)
 // restart the task (tsk) from the initial state
 #define tsk_restart(tsk)           do { if (tsk_self(tsk)) tsk_again(); tsk_kill(tsk); tsk_start(tsk);             } while(0)
 // restart the current task from the initial state
@@ -200,7 +200,7 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 // suspend execution of the ready task (tsk)
 #define tsk_suspend(tsk)           do { if ((tsk)->id == ID_RDY) { (tsk)->id = ID_DLY; TSK_YIELD(tsk_self(tsk)); } } while(0)
 // suspend execution of the current task
-#define cur_suspend()              do { tsk_this()->id = ID_DLY; TSK_YIELD(true);                                  } while(0)
+#define cur_suspend()              do { sys_current->id = ID_DLY; TSK_YIELD(true);                                 } while(0)
 // resume execution of the suspended task (tsk)
 #define tsk_resume(tsk)            do { if ((tsk)->id == ID_DLY) { (tsk)->id = ID_RDY; }                           } while(0)
 

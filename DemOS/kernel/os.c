@@ -2,7 +2,7 @@
 
     @file    DemOS: os.c
     @author  Rajmund Szymanski
-    @date    03.09.2018
+    @date    08.11.2018
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -43,7 +43,7 @@ tsk_t *sys_current = &MAIN;
 void tsk_start( tsk_t *tsk )
 {
 	static
-	tsk_t *prv = &MAIN;
+	tsk_t *tail = &MAIN;
 
 	if (tsk->id == ID_RIP)
 	{
@@ -52,9 +52,9 @@ void tsk_start( tsk_t *tsk )
 
 		if (tsk->next == 0)
 		{
-			tsk->next = &MAIN;
-			prv->next = tsk;
-			prv = tsk;
+			tsk->next = tail->next;
+			tail->next = tsk;
+			tail = tsk;
 		}
 	}
 }
