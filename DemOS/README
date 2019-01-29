@@ -15,6 +15,13 @@ Features:
 - once flags
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
+0.5
+- updated os version
+---------
+0.4
+- updated os version
+- minor updates
+---------
 0.3
 - added a few function aliases
 - added once flag object
