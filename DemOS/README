@@ -17,6 +17,7 @@ Features:
 ---------
 0.5
 - updated os version
+- added support for stm32l1
 ---------
 0.4
 - updated os version
