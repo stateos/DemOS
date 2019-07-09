@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    29.01.2019
+    @date    09.07.2019
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -70,7 +70,7 @@ extern "C" {
 #define MIN        ((cnt_t)(OS_FREQUENCY)*60)      // time multiplier given in minutes
 
 #ifndef INFINITE
-#define INFINITE   (~(cnt_t)0)                     // time value for infinite wait
+#define INFINITE   ((cnt_t)0-1)                    // time value for infinite wait
 #endif
 
 /* -------------------------------------------------------------------------- */
