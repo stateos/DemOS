@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    09.07.2019
+    @date    03.12.2019
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -171,6 +171,8 @@ void    tsk_start( tsk_t *tsk );     // system function - make task ready to exe
 #define tsk_again()                do { sys_current->state = 0; return;                                            } while(0)
 // stop the current task; it will no longer be executed
 #define tsk_stop()                 do { sys_current->id = ID_RIP; return;                                          } while(0)
+// stop the current task; it will no longer be executed
+#define tsk_exit()                 do { sys_current->id = ID_RIP; return;                                          } while(0)
 // stop the task (tsk); it will no longer be executed
 #define tsk_kill(tsk)              do { (tsk)->id = ID_RIP; if (tsk_self(tsk)) return;                             } while(0)
 // stop the current task; it will no longer be executed

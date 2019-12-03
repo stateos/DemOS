@@ -18,6 +18,7 @@ Features:
 0.5
 - updated os version
 - added support for stm32l1
+- added tsk_exit alias
 ---------
 0.4
 - updated os version
