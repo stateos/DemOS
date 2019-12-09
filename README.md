@@ -1,6 +1,6 @@
 # DemOS
   [![Build Status](https://travis-ci.org/stateos/DemOS.svg)](https://travis-ci.org/stateos/DemOS)
-  [![codecov.io](https://codecov.io/github/stateos/DemOS/coverage.svg)](https://codecov.io/github/stateos/DemOS)
+  [![codecov.io](https://codecov.io/github/stateos/DemOS/coverage.svg?branch=master)](https://codecov.io/github/stateos/DemOS?branch=master)
   [![Github Release](https://img.shields.io/github/release/stateos/DemOS.svg)](https://github.com/stateos/DemOS/releases)
   [![Software License](https://img.shields.io/github/license/stateos/DemOS.svg)](https://opensource.org/licenses/MIT)
 
