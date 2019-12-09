@@ -1,6 +1,7 @@
 os: linux
 sudo: required
-language: generic
+language: cpp
+compiler: gcc
 
 install:
   - sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa
