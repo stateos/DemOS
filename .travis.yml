@@ -1,6 +1,6 @@
 os: linux
 sudo: required
-language: c
+language: generic
 
 install:
   - sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa
@@ -10,7 +10,7 @@ install:
 
 script:
   - bash ./.travis.sh
-  - gcov ./*
+  - gcov ./src/* ./Demos/*
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
