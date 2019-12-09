@@ -10,7 +10,7 @@ install:
 
 script:
   - bash ./.travis.sh
-  - gcov src/*
+  - gcov ./*
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
