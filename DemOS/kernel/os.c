@@ -2,7 +2,7 @@
 
     @file    DemOS: os.c
     @author  Rajmund Szymanski
-    @date    08.11.2018
+    @date    06.12.2019
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -34,7 +34,7 @@
 /* --------------------------------------------------------------------------------------------- */
 
 static
-tsk_t  MAIN = { 0, ID_RIP, 0, 0, &MAIN };
+tsk_t  MAIN = { 0, ID_RIP, 0, NULL, &MAIN };
 
 tsk_t *sys_current = &MAIN;
 

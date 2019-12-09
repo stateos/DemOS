@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    03.12.2019
+    @date    06.12.2019
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -113,7 +113,7 @@ typedef enum   __tid { ID_RIP = 0, ID_RDY, ID_DLY } tid_t;
 typedef struct __tsk { cnt_t tmr; tid_t id; tag_t state; fun_t *function; struct __tsk *next; } tsk_t;
 
 // task initializer
-#define TSK_INIT(fun)                   { 0, ID_RIP, 0, fun, 0 }
+#define TSK_INIT(fun)                   { 0, ID_RIP, 0, fun, NULL }
 
 extern
 tsk_t * sys_current;                 // system variable - current task
@@ -233,7 +233,7 @@ typedef tsk_t *mtx_t;
 
 /* -------------------------------------------------------------------------- */
 // define and initialize the mutex (mtx)
-#define OS_MTX(mtx)                     mtx_t mtx[] = { 0 }
+#define OS_MTX(mtx)                     mtx_t mtx[] = { NULL }
 /* -------------------------------------------------------------------------- */
 // try to lock the mutex (mtx); return true if the mutex has been successfully locked
 #define mtx_take(mtx)                 ( *(mtx) ? false : ((*(mtx) = sys_current), true) )
@@ -244,7 +244,7 @@ typedef tsk_t *mtx_t;
 // alias
 #define mtx_lock(mtx)                   mtx_wait(mtx)
 // release previously owned mutex (mtx); return true if the mutex has been successfully released
-#define mtx_give(mtx)                 ( tsk_self(*(mtx)) ? ((*(mtx) = 0), true) : false )
+#define mtx_give(mtx)                 ( tsk_self(*(mtx)) ? ((*(mtx) = NULL), true) : false )
 // alias
 #define mtx_unlock(mtx)                 mtx_give(mtx)
 
@@ -320,10 +320,10 @@ typedef fun_t *job_t;
 
 /* -------------------------------------------------------------------------- */
 // define and initialize the job (job)
-#define OS_JOB(job)                     job_t job[] = { 0 }
+#define OS_JOB(job)                     job_t job[] = { NULL }
 /* -------------------------------------------------------------------------- */
 // try to take a function from the job (job); return true if the function has been successfully taken and executed
-#define job_take(job)                 ( *(job) ? ((*(job))(), *(job) = 0, true) : false )
+#define job_take(job)                 ( *(job) ? ((*(job))(), *(job) = NULL, true) : false )
 // alias
 #define job_tryWait(job)                job_take(job)
 // wait for a the new job (job) function, execute it and release the job
