@@ -2,6 +2,7 @@
   [![Build Status](https://travis-ci.org/stateos/DemOS.svg)](https://travis-ci.org/stateos/DemOS)
   [![codecov.io](https://codecov.io/github/stateos/DemOS/coverage.svg)](https://codecov.io/github/stateos/DemOS)
   [![Github Release](https://img.shields.io/github/release/stateos/DemOS.svg)](https://github.com/stateos/DemOS/releases)
+  [![Github All Releases](https://img.shields.io/github/downloads/stateos/DemOS/total.svg)](https://github.com/stateos/DemOS/releases/)
   [![Software License](https://img.shields.io/github/license/stateos/DemOS.svg)](https://opensource.org/licenses/MIT)
 
 Free, simple, extremely lightweight, stackless, cooperative, quasi operating system (OS) designed for deeply embedded applications.
