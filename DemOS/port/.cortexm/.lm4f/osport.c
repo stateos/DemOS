@@ -2,12 +2,12 @@
 
     @file    DemOS: osport.c
     @author  Rajmund Szymanski
-    @date    03.09.2018
+    @date    10.03.2020
     @brief   DemOS port file for LM4F uC.
 
  ******************************************************************************
 
-   Copyright (c) 2018 Rajmund Szymanski. All rights reserved.
+   Copyright (c) 2018-2020 Rajmund Szymanski. All rights reserved.
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to
@@ -33,16 +33,10 @@
 
 /* --------------------------------------------------------------------------------------------- */
 
-#ifndef USE_HAL_DRIVER
-
 volatile
 cnt_t sys_counter = 0;
 
-#endif
-
 /* --------------------------------------------------------------------------------------------- */
-
-#ifndef USE_HAL_DRIVER
 
 void SysTick_Handler( void )
 {
@@ -50,15 +44,11 @@ void SysTick_Handler( void )
 	sys_counter++;
 }
 
-#endif
-
 /* --------------------------------------------------------------------------------------------- */
 
 void sys_init( void )
 {
-#ifndef USE_HAL_DRIVER
 	SysTick_Config(SystemCoreClock/1000);
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -66,11 +56,7 @@ void sys_init( void )
 cnt_t sys_time( void )
 {
 	cnt_t cnt;
-#ifndef USE_HAL_DRIVER
 	cnt = sys_counter;
-#else
-	cnt = HAL_GetTick();
-#endif
 	return cnt;
 }
 

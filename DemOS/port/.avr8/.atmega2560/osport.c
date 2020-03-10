@@ -2,12 +2,12 @@
 
     @file    DemOS: osport.c
     @author  Rajmund Szymanski
-    @date    03.09.2018
+    @date    10.03.2020
     @brief   DemOS port file for ATtiny817 uC.
 
  ******************************************************************************
 
-   Copyright (c) 2018 Rajmund Szymanski. All rights reserved.
+   Copyright (c) 2018-2020 Rajmund Szymanski. All rights reserved.
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to
