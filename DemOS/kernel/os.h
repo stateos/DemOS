@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    10.03.2020
+    @date    23.05.2020
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -269,9 +269,7 @@ typedef uint_fast8_t sem_t;
 // try to release the semaphore (sem); return true if the semaphore has been successfully released
 #define sem_give(sem)                 ( sem_taken(sem) ? ((*(sem) = 1), true) : false )
 // alias
-#define sem_post(sem)                   sem_post(sem)
-// wait for the locked semaphore (sem) and release it
-#define sem_send(sem)                   tsk_waitUntil(sem_give(sem))
+#define sem_post(sem)                   sem_give(sem)
 
 /* Protected signal ========================================================= */
 // definition of protected signal
