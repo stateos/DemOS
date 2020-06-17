@@ -1,7 +1,7 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-void slave()
+void consumer()
 {
 	tsk_begin();
 
@@ -11,17 +11,17 @@ void slave()
 	tsk_end();
 }
 
-OS_TSK_DEF(mas)
+OS_TSK_DEF(prod)
 {
-	static tsk_t sla = TSK_INIT(0);
+	static tsk_t cons = TSK_INIT(NULL);
 
 	tsk_begin();
 
 	for (;;)
 	{
 		tsk_sleepNext(SEC);
-		tsk_startFrom(&sla, slave);
-		tsk_join(&sla);
+		tsk_startFrom(&cons, consumer);
+		tsk_join(&cons);
 	}
 
 	tsk_end();
@@ -31,6 +31,6 @@ int main()
 {
 	LED_Init();
 
-	tsk_start(mas);
+	tsk_start(prod);
 	sys_start();
 }

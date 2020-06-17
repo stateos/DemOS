@@ -8,7 +8,7 @@ void leds_off( void )
 	LEDs = 0;
 }
 
-OS_TSK_DEF(mas)
+OS_TSK_DEF(tsk)
 {
 	tsk_begin();
 
@@ -26,6 +26,6 @@ int main()
 {
 	LED_Init();
 
-	tsk_start(mas);
+	tsk_start(tsk);
 	sys_start();
 }

@@ -1,14 +1,14 @@
 #include <stm32f4_discovery.h>
 #include <os.h>
 
-void slave ( void );
-void master( void );
+void consumer( void );
+void producer( void );
 
-tsk_t sla = TSK_INIT(slave);
-tsk_t mas = TSK_INIT(master);
-tmr_t tmr = 0;
+tsk_t cons = TSK_INIT(consumer);
+tsk_t prod = TSK_INIT(producer);
+tmr_t tmr  = 0;
 
-void slave( void )
+void consumer( void )
 {
 	tsk_begin();
 
@@ -18,12 +18,12 @@ void slave( void )
 	tsk_end();
 }
 
-void master( void )
+void producer( void )
 {
 	tsk_begin();
 
 	tmr_waitFor(&tmr, SEC);
-	tsk_resume(&sla);
+	tsk_resume(&cons);
 
 	tsk_end();
 }
@@ -32,7 +32,7 @@ int main( void )
 {
 	LED_Init();
 
-	tsk_start(&sla);
-	tsk_start(&mas);
+	tsk_start(&cons);
+	tsk_start(&prod);
 	sys_start();
 }
