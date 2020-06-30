@@ -2,7 +2,7 @@
 
     @file    DemOS: os.h
     @author  Rajmund Szymanski
-    @date    23.05.2020
+    @date    30.06.2020
     @brief   This file provides set of functions for DemOS.
 
  ******************************************************************************
@@ -113,7 +113,7 @@ typedef enum   __tid { ID_RIP = 0, ID_RDY, ID_DLY } tid_t;
 typedef struct __tsk { cnt_t tmr; tid_t id; tag_t state; fun_t *function; struct __tsk *next; } tsk_t;
 
 // task initializer
-#define TSK_INIT(fun)                   { 0, ID_RIP, 0, fun, NULL }
+#define TSK_INIT(fun)                   { 0, ID_RIP, NULL, fun, NULL }
 
 extern
 tsk_t * sys_current;                 // system variable - current task

@@ -34,7 +34,7 @@
 /* --------------------------------------------------------------------------------------------- */
 
 static
-tsk_t  MAIN = { 0, ID_RIP, 0, NULL, &MAIN };
+tsk_t  MAIN = { 0, ID_RIP, NULL, NULL, &MAIN };
 
 tsk_t *sys_current = &MAIN;
 
@@ -47,10 +47,10 @@ void tsk_start( tsk_t *tsk )
 
 	if (tsk->id == ID_RIP)
 	{
-		tsk->state = 0;
+		tsk->state = NULL;
 		tsk->id = ID_RDY;
 
-		if (tsk->next == 0)
+		if (tsk->next == NULL)
 		{
 			tsk->next = tail->next;
 			tail->next = tsk;
