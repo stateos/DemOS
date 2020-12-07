@@ -11,7 +11,7 @@ OS_TSK_DEF(cons)
 
 	evt_wait(evt);
 	x = evt_take(evt);
-	LEDs = x & 0xF;
+	LEDs = x;
 
 	tsk_end();
 }
