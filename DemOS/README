@@ -16,6 +16,7 @@ Features:
 - examples and templates are in separate repositories (https://github.com/stateos)
 ---------
 0.8
+- updated os version
 - preventing sign-conversion warnings
 ---------
 0.6
