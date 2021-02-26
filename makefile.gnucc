@@ -20,7 +20,7 @@ INCS       ?=
 LIBS       ?=
 KEYS       ?=
 OPTF       ?=
-STDC       ?= 11#17
+STDC       ?= 17
 SCRIPT     ?=
 
 #----------------------------------------------------------#
@@ -98,10 +98,10 @@ COMMON_F   +=#-Wa,-amhls=$(@:.o=.lst)
 
 AS_FLAGS    =
 ifneq ($(filter USE_GNU,$(DEFS)),)
-C_FLAGS     = -std=gnu$(STDC:20=2x)
+C_FLAGS     = -std=gnu11
 CXX_FLAGS   = -std=gnu++$(STDC:20=2a)
 else
-C_FLAGS     = -std=c$(STDC:20=2x)
+C_FLAGS     = -std=c11
 CXX_FLAGS   = -std=c++$(STDC:20=2a)
 endif
 CXX_FLAGS  += -fno-rtti -fno-exceptions -Wzero-as-null-pointer-constant -fno-use-cxa-atexit
