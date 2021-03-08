@@ -5,13 +5,10 @@ OS_EVT(evt);
 
 OS_TSK_DEF(cons)
 {
-	unsigned x;
-
 	tsk_begin();
 
 	evt_wait(evt);
-	x = evt_take(evt);
-	LEDs = x;
+	LEDs = evt_take(evt) & 0x0FUL;
 
 	tsk_end();
 }
