@@ -1,4 +1,5 @@
 # DemOS
+  [![CI Status](https://github.com/stateos/DemOS/actions/workflows/test.yml/badge.svg)](https://github.com/stateos/DemOS/actions/workflows/test.yml)
   [![CI Status](https://github.com/stateos/DemOS/workflows/CI/badge.svg)](https://github.com/stateos/DemOS/actions)
   [![Github Release](https://img.shields.io/github/release/stateos/DemOS.svg)](https://github.com/stateos/DemOS/releases)
   [![Software License](https://img.shields.io/github/license/stateos/DemOS.svg)](https://opensource.org/licenses/MIT)
