@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: checkout repository
     - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - name: install arm-none-eabi-gcc
       uses: fiam/arm-none-eabi-gcc@v1
       with:
