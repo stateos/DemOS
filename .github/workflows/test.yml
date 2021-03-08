@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ main ]
+
   pull_request:
     branches: [ main ]
 
@@ -14,8 +15,8 @@ jobs:
     steps:
     - name: checkout repository
     - uses: actions/checkout@v2
-      with:
-        submodules: recursive
+    - name: checkout submodules
+      run: git submodule update --init --recursive
     - name: install arm-none-eabi-gcc
       uses: fiam/arm-none-eabi-gcc@v1
       with:
