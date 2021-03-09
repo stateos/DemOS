@@ -17,8 +17,8 @@ OS_TSK_DEF(prod)
 {
 	tsk_begin();
 
-	tsk_delay(SEC);
-	sem_give(sem);
+	tsk_sleepNext(SEC);
+	sem_post(sem);
 
 	tsk_end();
 }
@@ -26,7 +26,6 @@ OS_TSK_DEF(prod)
 int main()
 {
 	LED_Init();
-
 	tsk_start(cons);
 	tsk_start(prod);
 	sys_start();
