@@ -1,6 +1,6 @@
 # DemOS
-  [![](https://img.shields.io/github/release/stateos/DemOS.svg?style=for-the-badge)](https://github.com/stateos/DemOS/releases)
-  [![](https://img.shields.io/github/license/stateos/DemOS.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  [![](https://img.shields.io/github/release/stateos/DemOS.svg?style=social&logo)](https://github.com/stateos/DemOS/releases)
+  [![](https://img.shields.io/github/license/stateos/DemOS.svg?style=social&logo)](https://opensource.org/licenses/MIT)
   [![](https://github.com/stateos/DemOS/actions/workflows/test.yml/badge.svg?style=for-the-badge)](https://github.com/stateos/DemOS/actions/workflows/test.yml)
   [![](https://github.com/stateos/DemOS/actions/workflows/example.yml/badge.svg?style=for-the-badge)](https://github.com/stateos/DemOS/actions/workflows/example.yml)
 
