@@ -1,8 +1,8 @@
 # DemOS
-  [![Github Release](https://img.shields.io/github/release/stateos/DemOS.svg?style=for-the-badge)](https://github.com/stateos/DemOS/releases)
-  [![Software License](https://img.shields.io/github/license/stateos/DemOS.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-  [![CI](https://github.com/stateos/DemOS/actions/workflows/test.yml/badge.svg?style=for-the-badge)](https://github.com/stateos/DemOS/actions/workflows/test.yml)
-  [![Example Tests](https://github.com/stateos/DemOS/actions/workflows/example.yml/badge.svg?style=for-the-badge)](https://github.com/stateos/DemOS/actions/workflows/example.yml)
+  [![](https://img.shields.io/github/release/stateos/DemOS.svg?style=for-the-badge)](https://github.com/stateos/DemOS/releases)
+  [![](https://img.shields.io/github/license/stateos/DemOS.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  [![](https://github.com/stateos/DemOS/actions/workflows/test.yml/badge.svg?style=for-the-badge)](https://github.com/stateos/DemOS/actions/workflows/test.yml)
+  [![](https://github.com/stateos/DemOS/actions/workflows/example.yml/badge.svg?style=for-the-badge)](https://github.com/stateos/DemOS/actions/workflows/example.yml)
 
 Free, simple, extremely lightweight, stackless, cooperative, quasi operating system (OS) designed for deeply embedded applications.
 Target: ARM Cortex-M, STM8, ST7, AVR8, x86/x64.
