@@ -18,4 +18,4 @@ do
 	rm -f examples/main.*
 done
 
-make -f examples.make clean
+make -f .example-test.make clean
