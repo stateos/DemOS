@@ -6,7 +6,7 @@ void producer( void );
 
 tsk_t cons = TSK_INIT(consumer);
 tsk_t prod = TSK_INIT(producer);
-tmr_t tmr  = 0;
+tmr_t tmr  = TMR_INIT();
 
 void consumer( void )
 {
