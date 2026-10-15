@@ -4,7 +4,7 @@
   [![](https://github.com/stateos/DemOS/actions/workflows/test.yml/badge.svg)](https://github.com/stateos/DemOS/actions/workflows/test.yml)
 
 Free, simple, extremely lightweight, stackless, cooperative, quasi operating system (OS) designed for deeply embedded applications.
-Target: ARM Cortex-M, STM8, ST7, AVR8, x86/x64.
+Target: ARM Cortex-M, STM8, ST7, AVR8, x86 / x86_64.
 
 ### Features
 
@@ -22,7 +22,7 @@ Target: ARM Cortex-M, STM8, ST7, AVR8, x86/x64.
 
 ### Targets
 
-CM0(+), CM3, CM4(F), CM7, STM8, ST7, AVR8, x86/x64
+CM0(+), CM3, CM4(F), CM7, STM8, ST7, AVR8, x86 / x86_64
 
 ### License
 
